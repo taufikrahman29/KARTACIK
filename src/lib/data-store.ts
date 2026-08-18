@@ -56,15 +56,23 @@ export interface GalleryItem {
   description: string;
 }
 
+export type OrgCategory = 'PEMBINA_PENASIHAT' | 'MPKT' | 'PENGURUS_HARIAN' | 'BIDANG';
+
 export interface OrgMember {
   id: string;
   name: string;
   role: string;
+  category: OrgCategory;
   division?: string;
-  photo: string;
-  phone?: string;
-  village: string;
-  order: number;
+  isLeader?: boolean;
+  photo?: string;
+  showPhoto?: boolean;
+  bio?: string;
+  whatsapp?: string;
+  instagram?: string;
+  sortOrder: number;
+  status: 'ACTIVE' | 'INACTIVE';
+  createdAt?: string;
 }
 
 export interface ComplaintRecord {
@@ -91,7 +99,7 @@ export interface VillageLandmark {
 export interface GrabDriverApplication {
   id: string;
   applicantName: string;
-  memberId: string; // ID Anggota KT Cikancung
+  memberId: string;
   whatsapp: string;
   address: string;
   village: string;
@@ -167,6 +175,7 @@ export interface GrabTariff {
 }
 
 export interface SiteSettings {
+  logoUrl?: string;
   instagramUsername: string;
   instagramUrl: string;
   facebookUrl: string;
@@ -199,7 +208,7 @@ export const SEED_VILLAGES: VillageLandmark[] = [
 export const SEED_INSTAGRAM: InstagramPost[] = [
   {
     id: 'ig-1',
-    instagramUrl: 'https://instagram.com/p/CikancungYouthCleanUp2026',
+    instagramUrl: 'https://www.instagram.com/karta.kec.cikancung/',
     thumbnail: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop&q=80',
     caption: 'Aksi Bersih Lingkungan & Penanaman 1.000 Pohon oleh Karang Taruna Kecamatan Cikancung bersama 9 Desa binaan! Pemuda bergerak, bumi lestari 🌱💚 #KarangTarunaCikancung #PemudaCikancung #KabupatenBandung',
     date: '15 Agustus 2026',
@@ -209,7 +218,7 @@ export const SEED_INSTAGRAM: InstagramPost[] = [
   },
   {
     id: 'ig-2',
-    instagramUrl: 'https://instagram.com/p/TurnamenFutsalPemudaCikancung',
+    instagramUrl: 'https://www.instagram.com/karta.kec.cikancung/',
     thumbnail: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&auto=format&fit=crop&q=80',
     caption: 'Pembukaan Turnamen Futsal Karang Taruna Cup 2026 se-Kecamatan Cikancung! Junjung tinggi sportifitas dan pererat silaturahmi pemuda! ⚽🏆',
     date: '10 Agustus 2026',
@@ -219,7 +228,7 @@ export const SEED_INSTAGRAM: InstagramPost[] = [
   },
   {
     id: 'ig-3',
-    instagramUrl: 'https://instagram.com/p/PelatihanDigitalUMKMCikancung',
+    instagramUrl: 'https://www.instagram.com/karta.kec.cikancung/',
     thumbnail: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&auto=format&fit=crop&q=80',
     caption: 'Workshop Digital Marketing & Onboarding Ecommerce gratis untuk pelaku UMKM muda Cikancung. Dorong kemandirian ekonomi desa! 🚀💼',
     date: '02 Agustus 2026',
@@ -229,7 +238,7 @@ export const SEED_INSTAGRAM: InstagramPost[] = [
   },
   {
     id: 'ig-4',
-    instagramUrl: 'https://instagram.com/p/BaktiSosialKesehatanCikancung',
+    instagramUrl: 'https://www.instagram.com/karta.kec.cikancung/',
     thumbnail: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80',
     caption: 'Bakti Sosial & Donor Darah Karang Taruna Cikancung bekerjasama dengan PMI Kab. Bandung. Terima kasih kepada seluruh relawan! ❤️🩸',
     date: '24 Juli 2026',
@@ -251,7 +260,7 @@ export const SEED_NEWS: NewsArticle[] = [
     summary: 'Inovasi pemberdayaan ekonomi pemuda terwujud melalui platform transportasi digital Grab KT berbasis anggota terverifikasi.',
     content: 'Karang Taruna Kecamatan Cikancung meluncurkan program inovatif Grab KT untuk membantu mobilitas warga sekaligus menggerakkan potensi ekonomi pemuda di 9 Desa Kecamatan Cikancung...',
     isPublished: true,
-    instagramLink: 'https://instagram.com/p/CikancungYouthCleanUp2026',
+    instagramLink: 'https://www.instagram.com/karta.kec.cikancung/',
     views: 1240
   },
   {
@@ -374,69 +383,86 @@ export const SEED_GALLERY: GalleryItem[] = [
 ];
 
 export const SEED_MEMBERS: OrgMember[] = [
-  {
-    id: 'm-1',
-    name: 'Ahmad Fauzi, S.Pd.',
-    role: 'Ketua Karang Taruna Kecamatan Cikancung',
-    photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
-    phone: '0812-3456-7890',
-    village: 'Desa Cikancung',
-    order: 1
-  },
-  {
-    id: 'm-2',
-    name: 'Rian Hidayat, S.ST.',
-    role: 'Wakil Ketua I (Bidang Organisasi & Kaderisasi)',
-    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
-    phone: '0813-9876-5432',
-    village: 'Desa Cihanyir',
-    order: 2
-  },
-  {
-    id: 'm-3',
-    name: 'Siti Nurhaliza, S.Kom.',
-    role: 'Sekretaris Umum',
-    photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80',
-    phone: '0857-1122-3344',
-    village: 'Desa Ciluluk',
-    order: 3
-  },
-  {
-    id: 'm-4',
-    name: 'Dewi Lestari, S.E.',
-    role: 'Bendahara Umum',
-    photo: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&auto=format&fit=crop&q=80',
-    phone: '0821-4455-6677',
-    village: 'Desa Mandalasari',
-    order: 4
-  },
-  {
-    id: 'm-5',
-    name: 'Dadan Ramdani',
-    role: 'Koordinator Divisi Usaha Kesejahteraan Sosial (UKS)',
-    division: 'Kesejahteraan Sosial',
-    photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80',
-    village: 'Desa Hegarmanah',
-    order: 5
-  },
-  {
-    id: 'm-6',
-    name: 'Budi Santoso',
-    role: 'Koordinator Divisi Pemuda, Olahraga & Seni Budaya',
-    division: 'Olahraga & Seni',
-    photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80',
-    village: 'Desa Mekarlaksana',
-    order: 6
-  },
-  {
-    id: 'm-7',
-    name: 'Agus Setiawan',
-    role: 'Koordinator Divisi Pengembangan Ekonomi & Grab KT',
-    division: 'Ekonomi & Grab KT',
-    photo: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&auto=format&fit=crop&q=80',
-    village: 'Desa Srirahayu',
-    order: 7
-  }
+  // 1. PEMBINA & PENASIHAT
+  { id: 'm-pb-1', name: 'Camat Cikancung', role: 'Pembina Umum', category: 'PEMBINA_PENASIHAT', sortOrder: 1, status: 'ACTIVE', showPhoto: true, bio: 'Pembina Umum Karang Taruna Kecamatan Cikancung' },
+  { id: 'm-pb-2', name: 'Kasi Sosial dan Budaya', role: 'Pembina Fungsional', category: 'PEMBINA_PENASIHAT', sortOrder: 2, status: 'ACTIVE', showPhoto: true, bio: 'Pembina Fungsional Bidang Sosial & Budaya Kecamatan' },
+  { id: 'm-pb-3', name: 'Para Kasi Kecamatan Cikancung', role: 'Pembina Teknis', category: 'PEMBINA_PENASIHAT', sortOrder: 3, status: 'ACTIVE', showPhoto: true, bio: 'Pembina Teknis Sektoral Kecamatan' },
+  { id: 'm-pb-4', name: 'Sekretaris Kecamatan Cikancung', role: 'Penasihat', category: 'PEMBINA_PENASIHAT', sortOrder: 4, status: 'ACTIVE', showPhoto: true, bio: 'Penasihat Karang Taruna Kecamatan' },
+  
+  // 2. MPKT
+  { id: 'm-mpkt-1', name: 'Agus Sofwan', role: 'Ketua MPKT', category: 'MPKT', isLeader: true, sortOrder: 5, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80', bio: 'Ketua Majelis Pertimbangan Karang Taruna Cikancung Masa Bakti 2025–2030' },
+  { id: 'm-mpkt-2', name: 'Indra', role: 'Wakil Ketua MPKT', category: 'MPKT', sortOrder: 6, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-mpkt-3', name: 'A. Gustiara', role: 'Sekretaris MPKT', category: 'MPKT', sortOrder: 7, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-mpkt-4', name: 'Asep Rohman', role: 'Anggota MPKT', category: 'MPKT', sortOrder: 8, status: 'ACTIVE', showPhoto: true },
+  { id: 'm-mpkt-5', name: 'Yanti Daniati', role: 'Anggota MPKT', category: 'MPKT', sortOrder: 9, status: 'ACTIVE', showPhoto: true },
+  { id: 'm-mpkt-6', name: 'Wiman Saepulloh', role: 'Anggota MPKT', category: 'MPKT', sortOrder: 10, status: 'ACTIVE', showPhoto: true },
+  { id: 'm-mpkt-7', name: 'Kiki Kusma Hendra', role: 'Anggota MPKT', category: 'MPKT', sortOrder: 11, status: 'ACTIVE', showPhoto: true },
+  
+  // 3. PENGURUS HARIAN
+  { id: 'm-ph-1', name: 'Ridwan Nur Rohman', role: 'Ketua Karang Taruna Kecamatan Cikancung', category: 'PENGURUS_HARIAN', isLeader: true, sortOrder: 12, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80', bio: 'Ketua Karang Taruna Kecamatan Cikancung Masa Bakti 2025–2030. Berkomitmen mewujudkan pemuda mandiri, berkarakter, dan inovatif.', whatsapp: '62895632180100', instagram: 'karta.kec.cikancung' },
+  { id: 'm-ph-2', name: 'Muhamad Yakub', role: 'Wakil Ketua I', category: 'PENGURUS_HARIAN', sortOrder: 13, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-ph-3', name: 'Muhamad Ridwan', role: 'Wakil Ketua II', category: 'PENGURUS_HARIAN', sortOrder: 14, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-ph-4', name: 'Rilvan Fadilah', role: 'Wakil Ketua III', category: 'PENGURUS_HARIAN', sortOrder: 15, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-ph-5', name: 'Muhammad Zamzam Taufik', role: 'Wakil Ketua IV', category: 'PENGURUS_HARIAN', sortOrder: 16, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-ph-6', name: 'Felipe Armando Siboro', role: 'Sekretaris', category: 'PENGURUS_HARIAN', sortOrder: 17, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-ph-7', name: 'Rani Susanti', role: 'Wakil Sekretaris', category: 'PENGURUS_HARIAN', sortOrder: 18, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-ph-8', name: 'Agil Mulyana', role: 'Bendahara', category: 'PENGURUS_HARIAN', sortOrder: 19, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-ph-9', name: 'Lusi Lusilawati', role: 'Wakil Bendahara', category: 'PENGURUS_HARIAN', sortOrder: 20, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=80' },
+  
+  // 4. OFFICIAL 10 BIDANG KHUSUS ORGANISASI MASA BAKTI 2025–2030
+
+  // BIDANG 1: BIDANG ORGANISASI DAN KELEMBAGAAN
+  { id: 'm-b1-1', name: 'JAJANG NURJAMAN', role: 'Ketua Bidang Organisasi & Kelembagaan', category: 'BIDANG', division: 'BIDANG ORGANISASI DAN KELEMBAGAAN', isLeader: true, sortOrder: 21, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b1-2', name: 'ALFI NURIZKYA', role: 'Anggota Bidang Organisasi', category: 'BIDANG', division: 'BIDANG ORGANISASI DAN KELEMBAGAAN', sortOrder: 22, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b1-3', name: 'SANTI SOPIAH', role: 'Anggota Bidang Organisasi', category: 'BIDANG', division: 'BIDANG ORGANISASI DAN KELEMBAGAAN', sortOrder: 23, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b1-4', name: 'ARI INDRA', role: 'Anggota Bidang Organisasi', category: 'BIDANG', division: 'BIDANG ORGANISASI DAN KELEMBAGAAN', sortOrder: 24, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80' },
+
+  // BIDANG 2: BIDANG PENDIDIKAN, PENELITIAN DAN PENGEMBANGAN
+  { id: 'm-b2-1', name: 'BUDI MULYADI', role: 'Ketua Bidang Pendidikan & Litbang', category: 'BIDANG', division: 'BIDANG PENDIDIKAN, PENELITIAN DAN PENGEMBANGAN', isLeader: true, sortOrder: 25, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b2-2', name: 'CICI FITRIANI', role: 'Anggota Bidang Pendidikan & Litbang', category: 'BIDANG', division: 'BIDANG PENDIDIKAN, PENELITIAN DAN PENGEMBANGAN', sortOrder: 26, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b2-3', name: 'RAFLI ARIESTA', role: 'Anggota Bidang Pendidikan & Litbang', category: 'BIDANG', division: 'BIDANG PENDIDIKAN, PENELITIAN DAN PENGEMBANGAN', sortOrder: 27, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&auto=format&fit=crop&q=80' },
+
+  // BIDANG 3: BIDANG OLAHRAGA DAN KESENIAN
+  { id: 'm-b3-1', name: 'DADAN DANDY', role: 'Ketua Bidang Olahraga & Kesenian', category: 'BIDANG', division: 'BIDANG OLAHRAGA DAN KESENIAN', isLeader: true, sortOrder: 28, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b3-2', name: 'MUHAMAD JAMIL', role: 'Anggota Bidang Olahraga & Kesenian', category: 'BIDANG', division: 'BIDANG OLAHRAGA DAN KESENIAN', sortOrder: 29, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b3-3', name: 'YARI ARDIANSYAH', role: 'Anggota Bidang Olahraga & Kesenian', category: 'BIDANG', division: 'BIDANG OLAHRAGA DAN KESENIAN', sortOrder: 30, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80' },
+
+  // BIDANG 4: BIDANG HUMAS, PUBLIKASI DAN MEDIA INFORMASI (SITI NUROHMAH SWAPPED HERE)
+  { id: 'm-b4-1', name: 'TAUFIK RAHMAN', role: 'Ketua Bidang Humas, Publikasi & Media', category: 'BIDANG', division: 'BIDANG HUMAS, PUBLIKASI DAN MEDIA INFORMASI', isLeader: true, sortOrder: 31, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b4-2', name: 'AHMAD ROSIDIN', role: 'Anggota Bidang Humas & Media', category: 'BIDANG', division: 'BIDANG HUMAS, PUBLIKASI DAN MEDIA INFORMASI', sortOrder: 32, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b4-3', name: 'WILHAM RIFQI RIFALDY', role: 'Anggota Bidang Humas & Media', category: 'BIDANG', division: 'BIDANG HUMAS, PUBLIKASI DAN MEDIA INFORMASI', sortOrder: 33, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b4-4', name: 'SITI NUROHMAH', role: 'Anggota Bidang Humas & Media', category: 'BIDANG', division: 'BIDANG HUMAS, PUBLIKASI DAN MEDIA INFORMASI', sortOrder: 34, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80' },
+
+  // BIDANG 5: BIDANG PENGEMBANGAN PEMBERDAYAAN SUMBER DAYA DAN KESEJAHTERAAN SOSIAL
+  { id: 'm-b5-1', name: 'HERI SAEPUDIN', role: 'Ketua Bidang Pemberdayaan SDM & Kesra', category: 'BIDANG', division: 'BIDANG PENGEMBANGAN PEMBERDAYAAN SUMBER DAYA DAN KESEJAHTERAAN SOSIAL', isLeader: true, sortOrder: 35, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b5-2', name: "SANI NUR'AISYIYYAH", role: 'Anggota Bidang Pemberdayaan SDM & Kesra', category: 'BIDANG', division: 'BIDANG PENGEMBANGAN PEMBERDAYAAN SUMBER DAYA DAN KESEJAHTERAAN SOSIAL', sortOrder: 36, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b5-3', name: 'ASEP MUHIDIN', role: 'Anggota Bidang Pemberdayaan SDM & Kesra', category: 'BIDANG', division: 'BIDANG PENGEMBANGAN PEMBERDAYAAN SUMBER DAYA DAN KESEJAHTERAAN SOSIAL', sortOrder: 37, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80' },
+
+  // BIDANG 6: BIDANG USAHA EKONOMI PRODUKTIF
+  { id: 'm-b6-1', name: 'LUKMAN HAKIM', role: 'Ketua Bidang Usaha Ekonomi Produktif', category: 'BIDANG', division: 'BIDANG USAHA EKONOMI PRODUKTIF', isLeader: true, sortOrder: 38, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b6-2', name: 'CEP DIK DIK P. T', role: 'Anggota Bidang UEP', category: 'BIDANG', division: 'BIDANG USAHA EKONOMI PRODUKTIF', sortOrder: 39, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b6-3', name: 'AYI SAEPUDIN', role: 'Anggota Bidang UEP', category: 'BIDANG', division: 'BIDANG USAHA EKONOMI PRODUKTIF', sortOrder: 40, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&auto=format&fit=crop&q=80' },
+
+  // BIDANG 7: BIDANG LINGKUNGAN HIDUP DAN KEPARIWISATAAN (LISTA AMALIA SWAPPED HERE)
+  { id: 'm-b7-1', name: 'BUDI BURHANUDIN', role: 'Ketua Bidang Lingkungan Hidup & Pariwisata', category: 'BIDANG', division: 'BIDANG LINGKUNGAN HIDUP DAN KEPARIWISATAAN', isLeader: true, sortOrder: 41, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b7-2', name: 'D.J. YUSUP', role: 'Anggota Bidang Lingkungan Hidup & Pariwisata', category: 'BIDANG', division: 'BIDANG LINGKUNGAN HIDUP DAN KEPARIWISATAAN', sortOrder: 42, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b7-3', name: 'YUDA MAULANA', role: 'Anggota Bidang Lingkungan Hidup & Pariwisata', category: 'BIDANG', division: 'BIDANG LINGKUNGAN HIDUP DAN KEPARIWISATAAN', sortOrder: 43, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b7-4', name: 'LISTA AMALIA', role: 'Anggota Bidang Lingkungan Hidup & Pariwisata', category: 'BIDANG', division: 'BIDANG LINGKUNGAN HIDUP DAN KEPARIWISATAAN', sortOrder: 44, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=80' },
+
+  // BIDANG 8: BIDANG KERJASAMA KEMITRAAN DENGAN PEMERINTAHAN PSKS DAN BADAN USAHA
+  { id: 'm-b8-1', name: 'IWAN SETIAWAN', role: 'Ketua Bidang Kerjasama Kemitraan', category: 'BIDANG', division: 'BIDANG KERJASAMA KEMITRAAN DENGAN PEMERINTAHAN PSKS DAN BADAN USAHA', isLeader: true, sortOrder: 45, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b8-2', name: 'NURIL AKBAR H', role: 'Anggota Bidang Kerjasama Kemitraan', category: 'BIDANG', division: 'BIDANG KERJASAMA KEMITRAAN DENGAN PEMERINTAHAN PSKS DAN BADAN USAHA', sortOrder: 46, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b8-3', name: 'UJANG SAEPULOH', role: 'Anggota Bidang Kerjasama Kemitraan', category: 'BIDANG', division: 'BIDANG KERJASAMA KEMITRAAN DENGAN PEMERINTAHAN PSKS DAN BADAN USAHA', sortOrder: 47, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b8-4', name: 'AGUNG RIKARDO', role: 'Anggota Bidang Kerjasama Kemitraan', category: 'BIDANG', division: 'BIDANG KERJASAMA KEMITRAAN DENGAN PEMERINTAHAN PSKS DAN BADAN USAHA', sortOrder: 48, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80' },
+
+  // BIDANG 9: BIDANG ADVOKASI, HUKUM DAN HAK ASASI MANUSIA
+  { id: 'm-b9-1', name: 'IRWANDI HADIANSYAH', role: 'Ketua Bidang Advokasi, Hukum & HAM', category: 'BIDANG', division: 'BIDANG ADVOKASI, HUKUM DAN HAK ASASI MANUSIA', isLeader: true, sortOrder: 49, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b9-2', name: 'GIAN PERMANA PUTRA', role: 'Anggota Bidang Advokasi & Hukum', category: 'BIDANG', division: 'BIDANG ADVOKASI, HUKUM DAN HAK ASASI MANUSIA', sortOrder: 50, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b9-3', name: 'POPO SAPRUDIN', role: 'Anggota Bidang Advokasi & Hukum', category: 'BIDANG', division: 'BIDANG ADVOKASI, HUKUM DAN HAK ASASI MANUSIA', sortOrder: 51, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&auto=format&fit=crop&q=80' },
+
+  // BIDANG 10: BIDANG KEROHANIAN DAN PEMBINAAN MENTAL
+  { id: 'm-b10-1', name: 'OBI SALAM', role: 'Ketua Bidang Kerohanian & Pembinaan Mental', category: 'BIDANG', division: 'BIDANG KEROHANIAN DAN PEMBINAAN MENTAL', isLeader: true, sortOrder: 52, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80' },
+  { id: 'm-b10-2', name: 'MISBAHUL MUNIR', role: 'Anggota Bidang Kerohanian & Pembinaan Mental', category: 'BIDANG', division: 'BIDANG KEROHANIAN DAN PEMBINAAN MENTAL', sortOrder: 53, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80' }
 ];
 
 export const SEED_DRIVERS: GrabDriver[] = [
@@ -445,7 +471,7 @@ export const SEED_DRIVERS: GrabDriver[] = [
     driverCode: 'KT-DRV-001',
     name: 'Asep Ridwan',
     memberId: 'KT-CKC-2024-089',
-    whatsapp: '0812-9988-7711',
+    whatsapp: '0895632180100',
     photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&auto=format&fit=crop&q=80',
     vehicleType: 'Motor (Scooter)',
     vehicleBrand: 'Honda Vario 160',
@@ -458,44 +484,6 @@ export const SEED_DRIVERS: GrabDriver[] = [
     village: 'Desa Cikancung',
     currentLat: -7.0195,
     currentLng: 107.8105
-  },
-  {
-    id: 'drv-2',
-    driverCode: 'KT-DRV-002',
-    name: 'Cecep Kurnia',
-    memberId: 'KT-CKC-2025-112',
-    whatsapp: '0857-4433-2211',
-    photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80',
-    vehicleType: 'Motor (Bebek/Sport)',
-    vehicleBrand: 'Yamaha NMAX 155',
-    plateNumber: 'D 3190 ZCA',
-    vehicleColor: 'Matte Grey',
-    rating: 4.8,
-    totalTrips: 98,
-    isOnline: true,
-    isAvailable: true,
-    village: 'Desa Cihanyir',
-    currentLat: -7.0250,
-    currentLng: 107.8220
-  },
-  {
-    id: 'drv-3',
-    driverCode: 'KT-DRV-003',
-    name: 'Yudi Gunawan',
-    memberId: 'KT-CKC-2024-045',
-    whatsapp: '0813-5566-7788',
-    photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80',
-    vehicleType: 'Mobil (MPV/Sedan)',
-    vehicleBrand: 'Daihatsu Sigra',
-    plateNumber: 'D 1842 ZCB',
-    vehicleColor: 'Putih Silver',
-    rating: 5.0,
-    totalTrips: 64,
-    isOnline: false,
-    isAvailable: true,
-    village: 'Desa Ciluluk',
-    currentLat: -7.0120,
-    currentLng: 107.8050
   }
 ];
 
@@ -504,7 +492,7 @@ export const SEED_DRIVER_APPLICATIONS: GrabDriverApplication[] = [
     id: 'app-101',
     applicantName: 'Taufik Hidayat',
     memberId: 'KT-CKC-2026-204',
-    whatsapp: '0896-1234-5678',
+    whatsapp: '0895632180100',
     address: 'Jl. Raya Cihanyir No. 42 RT 02/05',
     village: 'Desa Cihanyir',
     ktpNumber: '3204151204980003',
@@ -527,7 +515,7 @@ export const SEED_ORDERS: GrabOrder[] = [
     id: 'ord-1',
     orderCode: 'GKT-20260818-001',
     customerName: 'Ibu Ratna',
-    customerPhone: '0812-7766-5544',
+    customerPhone: '0895632180100',
     pickupName: 'Pasar Tradisional Ciluluk',
     pickupLat: -7.0120,
     pickupLng: 107.8050,
@@ -544,7 +532,7 @@ export const SEED_ORDERS: GrabOrder[] = [
     orderStatus: 'TRIP_COMPLETED',
     driverId: 'drv-1',
     driverName: 'Asep Ridwan',
-    driverPhone: '0812-9988-7711',
+    driverPhone: '0895632180100',
     driverPlate: 'D 4582 ZCJ',
     driverVehicle: 'Honda Vario 160',
     createdAt: '18 Agustus 2026 14:20 WIB',
@@ -561,13 +549,14 @@ export const SEED_TARIFF: GrabTariff = {
 };
 
 export const SEED_SETTINGS: SiteSettings = {
-  instagramUsername: 'kartabacip',
-  instagramUrl: 'https://instagram.com/kartabacip',
-  facebookUrl: 'https://facebook.com/kartabacip',
-  tiktokUrl: 'https://tiktok.com/@kartabacip',
+  logoUrl: '',
+  instagramUsername: 'karta.kec.cikancung',
+  instagramUrl: 'https://www.instagram.com/karta.kec.cikancung/',
+  facebookUrl: 'https://facebook.com/karta.kec.cikancung',
+  tiktokUrl: 'https://tiktok.com/@karta.kec.cikancung',
   youtubeUrl: 'https://youtube.com/@KarangTarunaCikancung',
-  whatsappNumber: '6281234567890',
-  email: 'info@kartabacip.or.id',
+  whatsappNumber: '62895632180100',
+  email: 'pktkeccikancung@gmail.com',
   address: 'Jl. Raya Cikancung No. 01, Kantor Kecamatan Cikancung, Kabupaten Bandung, Jawa Barat 40396',
   heroHeadline: 'Karang Taruna Kecamatan Cikancung',
   heroSubheadline: 'Bersama Pemuda, Bergerak, Berkarya, dan Membangun Cikancung.',
@@ -584,7 +573,7 @@ export const SEED_SETTINGS: SiteSettings = {
 // ------------ DATA STORE CLASS WITH LOCALSTORAGE INTEGRATION ------------
 
 export class DataStore {
-  private static STORAGE_PREFIX = 'kartabacip_db_v1_';
+  private static STORAGE_PREFIX = 'kartabacip_db_v10_';
 
   private static getItem<T>(key: string, fallback: T): T {
     if (typeof window === 'undefined') return fallback;
@@ -612,6 +601,24 @@ export class DataStore {
   static saveInstagramPosts(posts: InstagramPost[]) {
     this.setItem('instagram', posts);
   }
+  static addInstagramPost(post: Omit<InstagramPost, 'id'>): InstagramPost {
+    const list = this.getInstagramPosts();
+    const newPost: InstagramPost = {
+      ...post,
+      id: 'ig-' + Date.now()
+    };
+    list.unshift(newPost);
+    this.saveInstagramPosts(list);
+    return newPost;
+  }
+  static updateInstagramPost(id: string, updated: Partial<InstagramPost>) {
+    const list = this.getInstagramPosts().map(p => p.id === id ? { ...p, ...updated } : p);
+    this.saveInstagramPosts(list);
+  }
+  static deleteInstagramPost(id: string) {
+    const list = this.getInstagramPosts().filter(p => p.id !== id);
+    this.saveInstagramPosts(list);
+  }
 
   // News
   static getNews(): NewsArticle[] {
@@ -619,6 +626,25 @@ export class DataStore {
   }
   static saveNews(news: NewsArticle[]) {
     this.setItem('news', news);
+  }
+  static addNews(article: Omit<NewsArticle, 'id' | 'views'>): NewsArticle {
+    const list = this.getNews();
+    const newArticle: NewsArticle = {
+      ...article,
+      id: 'n-' + Date.now(),
+      views: 1
+    };
+    list.unshift(newArticle);
+    this.saveNews(list);
+    return newArticle;
+  }
+  static updateNews(id: string, updated: Partial<NewsArticle>) {
+    const list = this.getNews().map(n => n.id === id ? { ...n, ...updated } : n);
+    this.saveNews(list);
+  }
+  static deleteNews(id: string) {
+    const list = this.getNews().filter(n => n.id !== id);
+    this.saveNews(list);
   }
 
   // Agendas
@@ -628,6 +654,24 @@ export class DataStore {
   static saveAgendas(agendas: AgendaItem[]) {
     this.setItem('agendas', agendas);
   }
+  static addAgenda(item: Omit<AgendaItem, 'id'>): AgendaItem {
+    const list = this.getAgendas();
+    const newItem: AgendaItem = {
+      ...item,
+      id: 'ag-' + Date.now()
+    };
+    list.unshift(newItem);
+    this.saveAgendas(list);
+    return newItem;
+  }
+  static updateAgenda(id: string, updated: Partial<AgendaItem>) {
+    const list = this.getAgendas().map(a => a.id === id ? { ...a, ...updated } : a);
+    this.saveAgendas(list);
+  }
+  static deleteAgenda(id: string) {
+    const list = this.getAgendas().filter(a => a.id !== id);
+    this.saveAgendas(list);
+  }
 
   // Announcements
   static getAnnouncements(): AnnouncementItem[] {
@@ -635,6 +679,24 @@ export class DataStore {
   }
   static saveAnnouncements(list: AnnouncementItem[]) {
     this.setItem('announcements', list);
+  }
+  static addAnnouncement(item: Omit<AnnouncementItem, 'id'>): AnnouncementItem {
+    const list = this.getAnnouncements();
+    const newItem: AnnouncementItem = {
+      ...item,
+      id: 'anc-' + Date.now()
+    };
+    list.unshift(newItem);
+    this.saveAnnouncements(list);
+    return newItem;
+  }
+  static updateAnnouncement(id: string, updated: Partial<AnnouncementItem>) {
+    const list = this.getAnnouncements().map(a => a.id === id ? { ...a, ...updated } : a);
+    this.saveAnnouncements(list);
+  }
+  static deleteAnnouncement(id: string) {
+    const list = this.getAnnouncements().filter(a => a.id !== id);
+    this.saveAnnouncements(list);
   }
 
   // Gallery
@@ -644,6 +706,24 @@ export class DataStore {
   static saveGallery(items: GalleryItem[]) {
     this.setItem('gallery', items);
   }
+  static addGallery(item: Omit<GalleryItem, 'id'>): GalleryItem {
+    const list = this.getGallery();
+    const newItem: GalleryItem = {
+      ...item,
+      id: 'gal-' + Date.now()
+    };
+    list.unshift(newItem);
+    this.saveGallery(list);
+    return newItem;
+  }
+  static updateGallery(id: string, updated: Partial<GalleryItem>) {
+    const list = this.getGallery().map(g => g.id === id ? { ...g, ...updated } : g);
+    this.saveGallery(list);
+  }
+  static deleteGallery(id: string) {
+    const list = this.getGallery().filter(g => g.id !== id);
+    this.saveGallery(list);
+  }
 
   // Org Members
   static getMembers(): OrgMember[] {
@@ -651,6 +731,25 @@ export class DataStore {
   }
   static saveMembers(members: OrgMember[]) {
     this.setItem('members', members);
+  }
+  static addMember(member: Omit<OrgMember, 'id' | 'createdAt'>): OrgMember {
+    const members = this.getMembers();
+    const newMember: OrgMember = {
+      ...member,
+      id: 'm-' + Date.now(),
+      createdAt: new Date().toISOString()
+    };
+    members.push(newMember);
+    this.saveMembers(members);
+    return newMember;
+  }
+  static updateMember(id: string, updated: Partial<OrgMember>) {
+    const members = this.getMembers().map(m => m.id === id ? { ...m, ...updated } : m);
+    this.saveMembers(members);
+  }
+  static deleteMember(id: string) {
+    const members = this.getMembers().filter(m => m.id !== id);
+    this.saveMembers(members);
   }
 
   // Complaints
@@ -672,6 +771,10 @@ export class DataStore {
   }
   static updateComplaintStatus(id: string, status: ComplaintRecord['status']) {
     const list = this.getComplaints().map(c => c.id === id ? { ...c, status } : c);
+    this.setItem('complaints', list);
+  }
+  static deleteComplaint(id: string) {
+    const list = this.getComplaints().filter(c => c.id !== id);
     this.setItem('complaints', list);
   }
 
@@ -713,7 +816,6 @@ export class DataStore {
 
     if (approved) {
       apps[appIndex].status = 'APPROVED';
-      // Create active driver
       const targetApp = apps[appIndex];
       const drivers = this.getDrivers();
       const newDriver: GrabDriver = {

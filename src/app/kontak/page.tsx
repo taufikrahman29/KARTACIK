@@ -1,210 +1,122 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { 
   MapPin, 
   Phone, 
   Mail, 
-  Send, 
+  Clock, 
+  Send,
   MessageSquare,
-  CheckCircle2
+  ShieldCheck,
+  Building,
+  ExternalLink
 } from 'lucide-react';
-import { InstagramIcon, FacebookIcon } from '@/components/Icons';
-import { SEED_SETTINGS } from '@/lib/data-store';
+import { InstagramIcon } from '@/components/Icons';
 
 export default function KontakPage() {
-  const [form, setForm] = useState({ name: '', email: '', whatsapp: '', message: '' });
-  const [sent, setSent] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.name || !form.whatsapp || !form.message) {
-      alert('Mohon isi field bertanda bintang.');
-      return;
-    }
-    setSent(true);
-  };
-
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 selection:bg-emerald-500 selection:text-slate-950 font-sans">
       <Navbar />
 
-      {/* Header Banner */}
-      <section className="pt-32 pb-16 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 border-b border-slate-800 text-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
-            <Mail className="w-4 h-4" />
-            <span>SEKRETARIAT PUSAT</span>
+      <main className="flex-1 pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-12">
+        
+        {/* HERO SECTION */}
+        <section className="text-center space-y-4 max-w-3xl mx-auto">
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-700/50 text-emerald-400 text-xs font-extrabold uppercase tracking-widest">
+            <Phone className="w-3.5 h-3.5" />
+            <span>Kontak & Sekretariat Official</span>
           </div>
-          
+
           <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-            Hubungi Karang Taruna Cikancung
+            Hubungi Karang Taruna Kecamatan Cikancung
           </h1>
 
-          <p className="text-slate-300 text-xs sm:text-base max-w-2xl mx-auto">
-            Sampaikan pertanyaan, usulan program, atau permohonan kemitraan melalui layanan kontak resmi kami.
+          <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+            Silakan hubungi sekretariat kami, layanan hotline WhatsApp, DM Instagram, atau sampaikan aspirasi dan kolaborasi Anda.
           </p>
-        </div>
-      </section>
+        </section>
 
-      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* CONTACT CARDS GRID */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
-          {/* Left Column: Contact Cards & Embedded Map Placeholder */}
-          <div className="lg:col-span-5 space-y-6">
-            
-            <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-5">
-              <h3 className="font-extrabold text-lg text-white border-b border-slate-800 pb-3">
-                Informasi Sekretariat
-              </h3>
-
-              <div className="space-y-4 text-xs text-slate-300">
-                <div className="flex items-start space-x-3">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-950 border border-emerald-700/40 text-emerald-400 flex items-center justify-center shrink-0">
-                    <MapPin className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-white">Alamat Lengkap</h4>
-                    <p className="text-slate-400 mt-0.5 leading-relaxed">{SEED_SETTINGS.address}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-3">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-950 border border-emerald-700/40 text-emerald-400 flex items-center justify-center shrink-0">
-                    <Phone className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-white">Hotline WhatsApp</h4>
-                    <p className="text-slate-400 mt-0.5">+{SEED_SETTINGS.whatsappNumber}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-3">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-950 border border-emerald-700/40 text-emerald-400 flex items-center justify-center shrink-0">
-                    <Mail className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-white">Email Resmi</h4>
-                    <p className="text-slate-400 mt-0.5">{SEED_SETTINGS.email}</p>
-                  </div>
-                </div>
-              </div>
+          {/* INSTAGRAM OFFICIAL */}
+          <a
+            href="https://www.instagram.com/karta.kec.cikancung/"
+            target="_blank"
+            rel="noreferrer"
+            className="p-6 rounded-3xl bg-slate-900 border border-slate-800 hover:border-pink-500 space-y-3 shadow-xl transition-all hover:scale-[1.02] group"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-pink-950 text-pink-400 flex items-center justify-center font-bold">
+              <InstagramIcon className="w-6 h-6 fill-current" />
             </div>
+            <span className="text-[10px] font-bold text-pink-400 uppercase tracking-wider block">Instagram Official & DM</span>
+            <h3 className="font-extrabold text-white text-lg group-hover:text-pink-400 truncate">@karta.kec.cikancung</h3>
+            <p className="text-slate-400 text-xs">Langsung terhubung dengan pesan DM pengaduan warga & informasi kegiatan.</p>
+          </a>
 
-            {/* Interactive Map Visual Placeholder */}
-            <div className="p-4 rounded-3xl bg-slate-900 border border-slate-800 space-y-2">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                Lokasi Kantor Kecamatan Cikancung
-              </span>
-              <div className="w-full h-56 rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 relative flex items-center justify-center">
-                <iframe
-                  title="Google Maps Cikancung"
-                  src="https://maps.google.com/maps?q=-7.0195,107.8105&z=15&output=embed"
-                  className="w-full h-full border-0 opacity-80 hover:opacity-100 transition-opacity"
-                  loading="lazy"
-                />
-              </div>
+          {/* WHATSAPP HOTLINE */}
+          <a
+            href="https://wa.me/62895632180100"
+            target="_blank"
+            rel="noreferrer"
+            className="p-6 rounded-3xl bg-slate-900 border border-slate-800 hover:border-emerald-500 space-y-3 shadow-xl transition-all hover:scale-[1.02] group"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-emerald-950 text-emerald-400 flex items-center justify-center font-bold">
+              <Phone className="w-6 h-6" />
             </div>
+            <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block">Hotline WhatsApp</span>
+            <h3 className="font-extrabold text-white text-lg group-hover:text-emerald-400">0895-6321-80100</h3>
+            <p className="text-slate-400 text-xs">Layanan pesan instan dan informasi seputar program Karang Taruna & Grab KT.</p>
+          </a>
 
-          </div>
+          {/* EMAIL OFFICIAL */}
+          <a
+            href="mailto:pktkeccikancung@gmail.com"
+            className="p-6 rounded-3xl bg-slate-900 border border-slate-800 hover:border-cyan-500 space-y-3 shadow-xl transition-all hover:scale-[1.02] group"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-cyan-950 text-cyan-400 flex items-center justify-center font-bold">
+              <Mail className="w-6 h-6" />
+            </div>
+            <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider block">Email Official</span>
+            <h3 className="font-extrabold text-white text-base group-hover:text-cyan-400 truncate">pktkeccikancung@gmail.com</h3>
+            <p className="text-slate-400 text-xs">Untuk surat resmi, kerjasama kemitraan, sponsor, dan koordinasi instansi.</p>
+          </a>
 
-          {/* Right Column: Contact Form */}
-          <div className="lg:col-span-7">
-            <div className="p-8 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl space-y-6">
-              
-              <div className="border-b border-slate-800 pb-3">
-                <h3 className="font-extrabold text-xl text-white">Kirim Pesan Langsung</h3>
-                <p className="text-xs text-slate-400">Tim pengurus kami akan merespons pesan Anda dalam 1x24 jam.</p>
-              </div>
+        </section>
 
-              {!sent ? (
-                <form onSubmit={handleSubmit} className="space-y-4 text-xs">
-                  
-                  <div className="space-y-1.5">
-                    <label className="font-bold text-slate-200">Nama Lengkap *</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Masukkan nama Anda"
-                      value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="font-bold text-slate-200">Email</label>
-                      <input
-                        type="email"
-                        placeholder="email@domain.com"
-                        value={form.email}
-                        onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="font-bold text-slate-200">Nomor WhatsApp *</label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="081234567890"
-                        value={form.whatsapp}
-                        onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="font-bold text-slate-200">Isi Pesan / Pertanyaan *</label>
-                    <textarea
-                      rows={5}
-                      required
-                      placeholder="Tuliskan pesan Anda di sini..."
-                      value={form.message}
-                      onChange={(e) => setForm({ ...form, message: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center space-x-2 shadow-lg hover:scale-[1.01] transition-all"
-                  >
-                    <Send className="w-4 h-4" />
-                    <span>Kirim Pesan</span>
-                  </button>
-
-                </form>
-              ) : (
-                <div className="p-8 rounded-2xl bg-slate-950 border border-emerald-500/40 text-center space-y-4 animate-in zoom-in-95">
-                  <div className="w-14 h-14 rounded-full bg-emerald-950 text-emerald-400 flex items-center justify-center mx-auto">
-                    <CheckCircle2 className="w-8 h-8" />
-                  </div>
-                  <h4 className="font-bold text-lg text-white">Pesan Anda Berhasil Terkirim!</h4>
-                  <p className="text-xs text-slate-300">
-                    Terima kasih telah menghubungi Karang Taruna Kecamatan Cikancung. Pesan Anda telah diteruskan ke Sekretariat.
-                  </p>
-                  <button
-                    onClick={() => setSent(false)}
-                    className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold"
-                  >
-                    Kirim Pesan Lainnya
-                  </button>
-                </div>
-              )}
-
+        {/* SECRETARIAT LOCATION */}
+        <section className="p-8 rounded-3xl bg-slate-900 border border-slate-800 space-y-6 shadow-xl">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <span className="text-xs font-bold text-emerald-400 uppercase">LOKASI ALAMAT</span>
+              <h2 className="text-2xl font-black text-white">Sekretariat Karang Taruna Kecamatan Cikancung</h2>
             </div>
           </div>
 
-        </div>
-      </section>
+          <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3 text-xs text-slate-300">
+            <div className="flex items-start space-x-3">
+              <MapPin className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-white text-sm block">Alamat Sekretariat Utama:</strong>
+                <p className="leading-relaxed mt-0.5">
+                  Jl. Raya Cikancung No. 01, Kompleks Kantor Kecamatan Cikancung, Kabupaten Bandung, Jawa Barat 40396.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-3 pt-2 border-t border-slate-900">
+              <Clock className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Jam Operasional Sekretariat: Senin - Jumat (08:00 - 16:00 WIB)</span>
+            </div>
+          </div>
+        </section>
+
+      </main>
 
       <Footer />
-    </main>
+    </div>
   );
 }

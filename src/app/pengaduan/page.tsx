@@ -3,291 +3,308 @@
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { DataStore, ComplaintRecord } from '@/lib/data-store';
 import { 
-  MessageSquareWarning, 
+  MessageSquare, 
   Send, 
   CheckCircle2, 
-  Upload, 
+  AlertCircle, 
   FileText, 
-  X, 
-  ArrowLeft,
+  Paperclip, 
+  ShieldAlert, 
+  ExternalLink,
+  Phone,
+  Lock,
   Copy,
-  ExternalLink
+  Check
 } from 'lucide-react';
 import { InstagramIcon } from '@/components/Icons';
-import { DataStore, SEED_SETTINGS } from '@/lib/data-store';
 
-export default function PengaduanPage() {
+export default function PengaduanWargaPage() {
   const [formData, setFormData] = useState({
     name: '',
     whatsapp: '',
-    category: 'Sosial',
-    location: '',
+    category: 'Layanan Publik & Fasilitas',
+    location: 'Kecamatan Cikancung',
     content: '',
-    attachmentName: '',
-    agreed: false
+    attachmentName: ''
   });
 
-  const [submittedTicket, setSubmittedTicket] = useState<{
-    ticketNumber: string;
-    formattedSummary: string;
-  } | null>(null);
-
+  const [submittedTicket, setSubmittedTicket] = useState<ComplaintRecord | null>(null);
   const [copied, setCopied] = useState(false);
-
-  const categories = [
-    'Kegiatan Karang Taruna',
-    'Sosial',
-    'Lingkungan',
-    'Kepemudaan',
-    'Olahraga',
-    'UMKM',
-    'Pelayanan',
-    'Lainnya'
-  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.whatsapp || !formData.content || !formData.agreed) {
-      alert('Mohon lengkapi seluruh field wajib dan setujui ketentuan penggunaan data.');
+    if (!formData.name || !formData.whatsapp || !formData.content) {
+      alert('Mohon lengkapi Nama, Nomor WhatsApp, dan Isi Pengaduan.');
       return;
     }
 
-    // Save record to local storage DB
-    const newRecord = DataStore.addComplaint({
-      name: formData.name,
-      whatsapp: formData.whatsapp,
-      category: formData.category,
-      location: formData.location || 'Kecamatan Cikancung',
-      content: formData.content,
-      attachmentName: formData.attachmentName || undefined
-    });
+    const record = DataStore.addComplaint(formData);
+    setSubmittedTicket(record);
 
-    // Format text for Instagram DM / WA transfer
-    const summaryText = `Halo Karang Taruna Kecamatan Cikancung,\nSaya ingin menyampaikan aspirasi/pengaduan berikut:\n\n📌 *Tiket*: ${newRecord.ticketNumber}\n👤 *Nama*: ${formData.name}\n📱 *WA*: ${formData.whatsapp}\n🏷️ *Kategori*: ${formData.category}\n📍 *Lokasi*: ${formData.location}\n📝 *Isi Pengaduan*: ${formData.content}`;
+    // Auto redirect / copy text format for IG DM
+    const textMsg = `Halo Karang Taruna Kecamatan Cikancung (@karta.kec.cikancung),\n\nSaya ingin menyampaikan Pengaduan Warga:\n- Tiket: ${record.ticketNumber}\n- Nama: ${record.name}\n- WA: ${record.whatsapp}\n- Kategori: ${record.category}\n- Lokasi: ${record.location}\n- Isi Pengaduan: "${record.content}"`;
 
-    setSubmittedTicket({
-      ticketNumber: newRecord.ticketNumber,
-      formattedSummary: summaryText
-    });
+    navigator.clipboard.writeText(textMsg).catch(() => {});
+
+    // Open Instagram DM directly in new tab after brief delay
+    setTimeout(() => {
+      window.open('https://www.instagram.com/karta.kec.cikancung/', '_blank');
+    }, 1500);
   };
 
-  const copyToClipboard = () => {
-    if (!submittedTicket) return;
-    navigator.clipboard.writeText(submittedTicket.formattedSummary);
+  const formattedIgText = submittedTicket 
+    ? `Halo Karang Taruna Kecamatan Cikancung (@karta.kec.cikancung),\n\nSaya ingin menyampaikan Pengaduan Warga:\n- Tiket: ${submittedTicket.ticketNumber}\n- Nama: ${submittedTicket.name}\n- WA: ${submittedTicket.whatsapp}\n- Kategori: ${submittedTicket.category}\n- Lokasi: ${submittedTicket.location}\n- Pesan Pengaduan: "${submittedTicket.content}"`
+    : '';
+
+  const handleCopyText = () => {
+    navigator.clipboard.writeText(formattedIgText);
     setCopied(true);
-    setTimeout(() => setCopied(false), 3000);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 selection:bg-emerald-500 selection:text-slate-950 font-sans">
       <Navbar />
 
-      {/* Header Banner */}
-      <section className="pt-32 pb-16 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 border-b border-slate-800 text-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
-            <MessageSquareWarning className="w-4 h-4" />
-            <span>PORTAL ASPIRASI MASYARAKAT</span>
-          </div>
-          
-          <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-            Sampaikan Pengaduan & Aspirasi Anda
-          </h1>
-
-          <p className="text-slate-300 text-xs sm:text-base max-w-2xl mx-auto">
-            Suara masyarakat adalah bagian penting dalam membangun lingkungan Kecamatan Cikancung yang lebih baik.
-          </p>
-        </div>
-      </section>
-
-      {/* Main Section */}
-      <section className="py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <main className="flex-1 pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full space-y-12">
         
-        {!submittedTicket ? (
-          /* FORM STATE */
-          <div className="p-8 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl space-y-6">
-            
-            <div className="border-b border-slate-800 pb-4 space-y-1">
-              <h2 className="text-xl font-bold text-white">Formulir Pengaduan Digital</h2>
-              <p className="text-xs text-slate-400">Silakan isi formulir di bawah ini dengan data yang valid.</p>
+        {/* HERO BANNER */}
+        <section className="text-center space-y-4">
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-pink-950/60 border border-pink-700/50 text-pink-300 text-xs font-extrabold uppercase tracking-widest shadow-md">
+            <InstagramIcon className="w-4 h-4" />
+            <span>Layanan Aspirasi & DM Instagram Official</span>
+          </div>
+
+          <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+            Layanan Pengaduan & Aspirasi Warga
+          </h1>
+          <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+            Sampaikan laporan, saran, atau aspirasi Anda. Pengaduan secara otomatis tersimpan di sistem Admin CMS dan **langsung terhubung ke DM Instagram Resmi Karang Taruna Kecamatan Cikancung** (<strong className="text-pink-400">@karta.kec.cikancung</strong>).
+          </p>
+        </section>
+
+        {submittedTicket ? (
+          /* SUCCESS TICKET STATE & IG DIRECT REDIRECT */
+          <section className="p-8 sm:p-10 rounded-3xl bg-slate-900 border border-emerald-500/50 space-y-6 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center space-x-4">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-950 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500">
+                <CheckCircle2 className="w-8 h-8" />
+              </div>
+              <div>
+                <span className="text-xs font-extrabold text-emerald-400 uppercase tracking-widest">PENGADUAN BERHASIL TERCATAT</span>
+                <h2 className="text-2xl font-black text-white">Nomor Tiket: {submittedTicket.ticketNumber}</h2>
+              </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5 text-xs">
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="font-bold text-slate-200">Nama Lengkap *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Contoh: Budi Santoso"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              Terima kasih <strong className="text-white">{submittedTicket.name}</strong>! Laporan pengaduan Anda telah resmi tercatat di database Admin Karang Taruna Cikancung. 
+              Teks pengaduan di bawah ini telah **otomatis tersalin (copied)**. Silakan kirimkan langsung via DM ke akun Instagram resmi:
+            </p>
 
-                <div className="space-y-1.5">
-                  <label className="font-bold text-slate-200">Nomor WhatsApp *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Contoh: 081234567890"
-                    value={formData.whatsapp}
-                    onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="font-bold text-slate-200">Kategori Pengaduan *</label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-emerald-500"
-                  >
-                    {categories.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="font-bold text-slate-200">Lokasi Kejadian / Desa</label>
-                  <input
-                    type="text"
-                    placeholder="Contoh: Desa Cihanyir RT 03/RW 02"
-                    value={formData.location}
-                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="font-bold text-slate-200">Isi Pengaduan / Aspirasi *</label>
-                <textarea
-                  rows={4}
-                  required
-                  placeholder="Jelaskan secara rinci pengaduan atau masukan Anda..."
-                  value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-
-              {/* Upload Simulation */}
-              <div className="space-y-1.5">
-                <label className="font-bold text-slate-200">Lampiran Foto / Dokumen Pendukung (Opsional)</label>
-                <div className="p-4 rounded-xl bg-slate-950 border border-dashed border-slate-800 text-center space-y-2">
-                  <Upload className="w-6 h-6 text-slate-500 mx-auto" />
-                  <p className="text-slate-400 text-[11px]">Format: JPG, PNG, PDF (Maks. 5MB)</p>
-                  <input
-                    type="file"
-                    className="hidden"
-                    id="attachment-file"
-                    onChange={(e) => {
-                      if (e.target.files?.[0]) {
-                        setFormData({ ...formData, attachmentName: e.target.files[0].name });
-                      }
-                    }}
-                  />
-                  <label
-                    htmlFor="attachment-file"
-                    className="inline-block px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer font-semibold"
-                  >
-                    {formData.attachmentName ? `File Terpilih: ${formData.attachmentName}` : 'Pilih Berkas'}
-                  </label>
-                </div>
-              </div>
-
-              {/* Agreement Checkbox */}
-              <div className="flex items-start space-x-2 pt-2">
-                <input
-                  type="checkbox"
-                  id="agreed-check"
-                  checked={formData.agreed}
-                  onChange={(e) => setFormData({ ...formData, agreed: e.target.checked })}
-                  className="mt-0.5 w-4 h-4 text-emerald-600 rounded bg-slate-950 border-slate-800 focus:ring-emerald-500"
-                />
-                <label htmlFor="agreed-check" className="text-slate-300 text-[11px] leading-tight cursor-pointer">
-                  Saya menyetujui data pengaduan saya digunakan untuk keperluan verifikasi dan tindak lanjut oleh Karang Taruna Kecamatan Cikancung.
-                </label>
-              </div>
-
-              <div className="pt-4">
+            {/* PRE-FORMATTED TEXT FOR IG */}
+            <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-400">Format Teks Pengaduan (Siap Kirim DM IG):</span>
                 <button
-                  type="submit"
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm flex items-center justify-center space-x-2 shadow-lg shadow-emerald-950/50 hover:scale-[1.01] transition-all"
+                  onClick={handleCopyText}
+                  className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-emerald-400 flex items-center space-x-1"
                 >
-                  <Send className="w-4 h-4" />
-                  <span>Kirim Pengaduan</span>
+                  {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copied ? 'Tersalin!' : 'Salin Teks'}</span>
                 </button>
               </div>
-
-            </form>
-          </div>
-        ) : (
-          /* SUCCESS & REDIRECT STATE (Section 20 requirement) */
-          <div className="p-8 rounded-3xl bg-slate-900 border border-emerald-500/40 shadow-2xl space-y-6 text-center animate-in zoom-in-95 duration-200">
-            
-            <div className="w-16 h-16 rounded-full bg-emerald-950 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto shadow-lg">
-              <CheckCircle2 className="w-8 h-8" />
+              <pre className="text-xs text-slate-200 font-mono whitespace-pre-wrap leading-relaxed bg-slate-900 p-3 rounded-xl border border-slate-800">
+                {formattedIgText}
+              </pre>
             </div>
 
-            <div className="space-y-2">
-              <span className="px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 text-xs font-bold uppercase border border-emerald-700">
-                PENGADUAN BERHASIL DICATAT
-              </span>
-              <h2 className="text-2xl font-black text-white">Nomor Tiket: {submittedTicket.ticketNumber}</h2>
-              <p className="text-xs text-slate-300 max-w-md mx-auto leading-relaxed">
-                Untuk mempercepat proses tindak lanjut, silakan kirimkan ringkasan pengaduan ini secara langsung melalui **DM Instagram Resmi** Karang Taruna Kecamatan Cikancung.
-              </p>
-            </div>
-
-            {/* Formatted Text Box */}
-            <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 text-left text-xs font-mono text-emerald-300 whitespace-pre-line relative">
-              {submittedTicket.formattedSummary}
-              <button
-                onClick={copyToClipboard}
-                className="absolute top-3 right-3 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-[10px] font-sans font-bold flex items-center space-x-1"
-              >
-                <Copy className="w-3 h-3" />
-                <span>{copied ? 'Tersalin!' : 'Salin Teks'}</span>
-              </button>
-            </div>
-
-            {/* Direct Instagram Link Button */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+            {/* DIRECT CTA BUTTONS */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
               <a
-                href={SEED_SETTINGS.instagramUrl}
+                href="https://www.instagram.com/karta.kec.cikancung/"
                 target="_blank"
                 rel="noreferrer"
-                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-pink-600 via-purple-600 to-amber-500 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center space-x-2 shadow-xl hover:opacity-95 transition-all"
+                className="w-full sm:w-auto flex-1 py-4 px-6 rounded-2xl bg-gradient-to-r from-pink-600 via-rose-600 to-purple-600 hover:from-pink-500 text-white font-extrabold text-sm flex items-center justify-center space-x-2 shadow-xl hover:scale-[1.02] transition-all"
               >
-                <InstagramIcon className="w-4 h-4" />
-                <span>Lanjutkan ke DM Instagram (@{SEED_SETTINGS.instagramUsername})</span>
-                <ExternalLink className="w-4 h-4" />
+                <InstagramIcon className="w-5 h-5 fill-white" />
+                <span>Kirimkan ke DM Instagram @karta.kec.cikancung ↗</span>
               </a>
 
+              <a
+                href={`https://wa.me/62895632180100?text=${encodeURIComponent(formattedIgText)}`}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full sm:w-auto py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm flex items-center justify-center space-x-2 shadow-xl hover:scale-[1.02] transition-all"
+              >
+                <Phone className="w-5 h-5" />
+                <span>Kirim via WA Hotline (0895632180100) ↗</span>
+              </a>
+            </div>
+
+            <div className="pt-4 border-t border-slate-800 text-center">
               <button
                 onClick={() => setSubmittedTicket(null)}
-                className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold flex items-center justify-center space-x-1"
+                className="text-xs text-slate-400 hover:text-white font-bold underline"
               >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Kembali ke Formulir</span>
+                Buat Pengaduan Lainnya
               </button>
+            </div>
+          </section>
+        ) : (
+          /* FORM SECTION */
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div className="lg:col-span-2 p-6 sm:p-8 rounded-3xl bg-slate-900 border border-slate-800 space-y-6 shadow-xl">
+              <div className="space-y-1 border-b border-slate-800 pb-4">
+                <h2 className="text-xl font-extrabold text-white">Formulir Pengaduan Online Warga</h2>
+                <p className="text-xs text-slate-400">Isi data secara benar. Identitas Anda dijaga kerahasiaannya oleh organisasi.</p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-5 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-slate-200">Nama Lengkap Pelapor *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Masukkan nama lengkap Anda"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:border-pink-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-slate-200">Nomor WhatsApp Aktif *</label>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="Contoh: 0895632180100"
+                      value={formData.whatsapp}
+                      onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                      className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:border-pink-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-slate-200">Kategori Pengaduan</label>
+                    <select
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:border-pink-500 focus:outline-none"
+                    >
+                      <option value="Layanan Publik & Fasilitas">Layanan Publik & Fasilitas</option>
+                      <option value="Kepemudaan & Olahraga">Kepemudaan & Olahraga</option>
+                      <option value="Kebersihan & Lingkungan">Kebersihan & Lingkungan</option>
+                      <option value="UMKM & Ekonomi Desa">UMKM & Ekonomi Desa</option>
+                      <option value="Transportasi / Grab KT">Transportasi / Grab KT</option>
+                      <option value="Lainnya">Lainnya</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-slate-200">Lokasi Kejadian / Desa</label>
+                    <select
+                      value={formData.location}
+                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                      className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:border-pink-500 focus:outline-none"
+                    >
+                      <option value="Kecamatan Cikancung">Kecamatan Cikancung (Umum)</option>
+                      <option value="Desa Cikancung">Desa Cikancung</option>
+                      <option value="Desa Cihanyir">Desa Cihanyir</option>
+                      <option value="Desa Ciluluk">Desa Ciluluk</option>
+                      <option value="Desa Hegarmanah">Desa Hegarmanah</option>
+                      <option value="Desa Mandalasari">Desa Mandalasari</option>
+                      <option value="Desa Mekarlaksana">Desa Mekarlaksana</option>
+                      <option value="Desa Srirahayu">Desa Srirahayu</option>
+                      <option value="Desa Tanjungwangi">Desa Tanjungwangi</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="font-bold text-slate-200">Isi Pesan Pengaduan / Aspirasi *</label>
+                  <textarea
+                    rows={5}
+                    required
+                    placeholder="Jelaskan pengaduan atau aspirasi Anda secara jelas..."
+                    value={formData.content}
+                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                    className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:border-pink-500 focus:outline-none"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-pink-600 via-rose-600 to-purple-600 hover:from-pink-500 text-white font-black text-sm flex items-center justify-center space-x-2 shadow-xl hover:scale-[1.01] transition-all"
+                >
+                  <Send className="w-4 h-4" />
+                  <span>Kirimkan Pengaduan & Buka DM Instagram ↗</span>
+                </button>
+              </form>
+            </div>
+
+            {/* CONTACT INFO CARD */}
+            <div className="space-y-4">
+              <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-4 text-xs">
+                <h3 className="font-extrabold text-sm text-white flex items-center space-x-2">
+                  <InstagramIcon className="w-4 h-4 fill-pink-400" />
+                  <span>Kontak Resmi Pengaduan</span>
+                </h3>
+
+                <div className="space-y-3">
+                  <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase">Instagram Direct Message</span>
+                    <a
+                      href="https://www.instagram.com/karta.kec.cikancung/"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-extrabold text-pink-400 hover:underline block text-sm truncate"
+                    >
+                      @karta.kec.cikancung
+                    </a>
+                  </div>
+
+                  <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase">WhatsApp Hotline</span>
+                    <a
+                      href="https://wa.me/62895632180100"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-extrabold text-emerald-400 hover:underline block text-sm"
+                    >
+                      0895-6321-80100
+                    </a>
+                  </div>
+
+                  <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase">Email Official</span>
+                    <a
+                      href="mailto:pktkeccikancung@gmail.com"
+                      className="font-extrabold text-cyan-400 hover:underline block text-sm"
+                    >
+                      pktkeccikancung@gmail.com
+                    </a>
+                  </div>
+                </div>
+
+                <div className="pt-2 text-[11px] text-slate-400 flex items-start space-x-2">
+                  <Lock className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <p>Seluruh laporan pengaduan terlindungi dan langsung diteruskan ke Pengurus Harian Karang Taruna Kecamatan Cikancung.</p>
+                </div>
+              </div>
             </div>
 
           </div>
         )}
 
-      </section>
+      </main>
 
       <Footer />
-    </main>
+    </div>
   );
 }

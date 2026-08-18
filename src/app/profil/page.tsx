@@ -1,21 +1,24 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { 
   ShieldCheck, 
   Target, 
   Compass, 
-  Award, 
-  Users, 
-  MapPin, 
   Quote 
 } from 'lucide-react';
-import { SEED_SETTINGS, SEED_MEMBERS } from '@/lib/data-store';
+import { DataStore, OrgMember, SEED_SETTINGS } from '@/lib/data-store';
 
 export default function ProfilPage() {
-  const ketua = SEED_MEMBERS.find(m => m.order === 1);
+  const [ketua, setKetua] = useState<OrgMember | null>(null);
+
+  useEffect(() => {
+    const members = DataStore.getMembers();
+    const leader = members.find(m => m.isLeader || m.role.toLowerCase().includes('ketua karang taruna'));
+    if (leader) setKetua(leader);
+  }, []);
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">
@@ -45,12 +48,12 @@ export default function ProfilPage() {
           <div className="p-8 rounded-3xl bg-slate-900/90 border border-emerald-500/30 shadow-2xl grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
             <div className="md:col-span-4 shrink-0 text-center space-y-3">
               <div className="w-44 h-44 mx-auto rounded-2xl overflow-hidden border-2 border-emerald-500/40 shadow-xl bg-slate-950">
-                <img src={ketua.photo} alt={ketua.name} className="w-full h-full object-cover" />
+                <img src={ketua.photo || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'} alt={ketua.name} className="w-full h-full object-cover" />
               </div>
               <div>
                 <h3 className="font-extrabold text-white text-base">{ketua.name}</h3>
                 <p className="text-emerald-400 text-xs font-semibold">{ketua.role}</p>
-                <p className="text-slate-400 text-[11px] mt-0.5">{ketua.village}</p>
+                <p className="text-slate-400 text-[11px] mt-0.5">Karang Taruna Kecamatan Cikancung</p>
               </div>
             </div>
 
@@ -60,7 +63,7 @@ export default function ProfilPage() {
                 <span className="text-xs font-bold uppercase tracking-wider">Sambutan Ketua Karang Taruna</span>
               </div>
               <p className="text-slate-300 text-xs sm:text-sm leading-relaxed italic">
-                "Assalamu'alaikum Warahmatullahi Wabarakatuh. Pemuda bukan hanya penerus masa depan, melainkan penentu masa kini. Karang Taruna Kecamatan Cikancung bertekad menjadi rumah kolaborasi bagi seluruh pemuda desa untuk menyalurkan energi positif, berwirausaha mandiri melaui inovasi seperti Grab KT, serta mengabdi secara tulus demi kemajuan Kabupaten Bandung."
+                "{ketua.bio || "Assalamu'alaikum Warahmatullahi Wabarakatuh. Pemuda bukan hanya penerus masa depan, melainkan penentu masa kini. Karang Taruna Kecamatan Cikancung bertekad menjadi rumah kolaborasi bagi seluruh pemuda desa untuk menyalurkan energi positif, berwirausaha mandiri melaui inovasi seperti Grab KT, serta mengabdi secara tulus demi kemajuan Kabupaten Bandung."}"
               </p>
               <div className="pt-2 text-right text-xs font-bold text-white">
                 — {ketua.name}

@@ -7,153 +7,136 @@ import {
   Trophy, 
   Store, 
   GraduationCap, 
-  Trees, 
+  TreePine, 
   Smartphone, 
-  Sparkles,
-  ArrowRight
+  Flag 
 } from 'lucide-react';
 
-export interface ProgramItem {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  icon: React.ElementType;
-  color: string;
-  badge: string;
-}
-
-export const PROGRAMS_DATA: ProgramItem[] = [
+const programs = [
   {
-    id: 'p-1',
-    title: 'Pembinaan Kepemudaan',
-    category: 'Kepemudaan',
-    description: 'Pelatihan kepemimpinan, pendidikan karakter, dan konsolidasi pengurus Karang Taruna di 9 Desa Cikancung.',
+    id: 1,
+    title: 'Kepemudaan & Keorganisasian',
+    desc: 'Pembinaan karakter dan kepemimpinan generasi muda desa.',
     icon: Users,
-    color: 'from-emerald-500/20 to-teal-500/20 text-emerald-400 border-emerald-500/30',
-    badge: 'Kaderisasi'
+    color: 'from-emerald-500/20 to-teal-500/20',
+    borderColor: 'border-emerald-500/40',
+    iconColor: 'text-emerald-400',
   },
   {
-    id: 'p-2',
-    title: 'Bakti & Akses Sosial Warga',
-    category: 'Sosial',
-    description: 'Tanggap bencana alam, pembagian paket donasi sembako, dan pendampingan kesejahteraan keluarga prasejahtera.',
+    id: 2,
+    title: 'Sosial & Tanggap Bencana',
+    desc: 'Aksi peduli kemanusiaan, bakti sosial, dan relawan bencana.',
     icon: HeartHandshake,
-    color: 'from-rose-500/20 to-pink-500/20 text-rose-400 border-rose-500/30',
-    badge: 'UKS'
+    color: 'from-red-500/20 to-pink-500/20',
+    borderColor: 'border-red-500/40',
+    iconColor: 'text-red-400',
   },
   {
-    id: 'p-3',
-    title: 'Olahraga & Turnamen Pemuda',
-    category: 'Olahraga',
-    description: 'Penyelenggaraan Karang Taruna Cup (Futsal, Voli, Badminton) serta gaya hidup sehat olahraga bermasyarakat.',
+    id: 3,
+    title: 'Olahraga & Seni Budaya',
+    desc: 'Turnamen Futsal Cup & pelestarian kesenian lokal Cikancung.',
     icon: Trophy,
-    color: 'from-amber-500/20 to-orange-500/20 text-amber-400 border-amber-500/30',
-    badge: 'Sport'
+    color: 'from-amber-500/20 to-yellow-500/20',
+    borderColor: 'border-amber-500/40',
+    iconColor: 'text-amber-400',
   },
   {
-    id: 'p-4',
-    title: 'Kemandirian Ekonomi & UMKM',
-    category: 'UMKM',
-    description: 'Pendampingan usaha kreatif pemuda, pemasaran produk lokal desa, serta bantuan promosi pameran.',
+    id: 4,
+    title: 'UMKM & Ekonomi Pemuda',
+    desc: 'Pemberdayaan usaha mikro desa dan inovasi Grab KT.',
     icon: Store,
-    color: 'from-cyan-500/20 to-blue-500/20 text-cyan-400 border-cyan-500/30',
-    badge: 'Ekonomi'
+    color: 'from-cyan-500/20 to-blue-500/20',
+    borderColor: 'border-cyan-500/40',
+    iconColor: 'text-cyan-400',
   },
   {
-    id: 'p-5',
-    title: 'Pendidikan & Beasiswa Belajar',
-    category: 'Pendidikan',
-    description: 'Bimbingan belajar gratis anak desa, taman bacaan pemuda, dan pelatihan sertifikasi keterampilan kerja.',
+    id: 5,
+    title: 'Pendidikan & Litbang',
+    desc: 'Beasiswa pelatihan digital dan riset kemajuan wilayah.',
     icon: GraduationCap,
-    color: 'from-purple-500/20 to-indigo-500/20 text-purple-400 border-purple-500/30',
-    badge: 'Edukasi'
+    color: 'from-indigo-500/20 to-purple-500/20',
+    borderColor: 'border-indigo-500/40',
+    iconColor: 'text-indigo-400',
   },
   {
-    id: 'p-6',
-    title: 'Lingkungan & Penghijauan',
-    category: 'Lingkungan',
-    description: 'Gerakan penanaman 1.000 pohon, pembersihan aliran sungai/parit desa, dan bank sampah pemuda.',
-    icon: Trees,
-    color: 'from-green-500/20 to-emerald-500/20 text-green-400 border-green-500/30',
-    badge: 'Ekologi'
+    id: 6,
+    title: 'Lingkungan & Pariwisata',
+    desc: 'Penanaman 1.000 pohon & pemetaan potensi wisata desa.',
+    icon: TreePine,
+    color: 'from-green-500/20 to-emerald-500/20',
+    borderColor: 'border-green-500/40',
+    iconColor: 'text-green-400',
   },
   {
-    id: 'p-7',
-    title: 'Inovasi Teknologi & Grab KT',
-    category: 'Teknologi Digital',
-    description: 'Pengembangan platform ride-hailing Grab KT dan digitalisasi sistem informasi desa berbasis pemuda.',
+    id: 7,
+    title: 'Teknologi & Media Digital',
+    desc: 'Pengelolaan portal berita, Instagram feed & publikasi.',
     icon: Smartphone,
-    color: 'from-blue-500/20 to-cyan-500/20 text-blue-400 border-blue-500/30',
-    badge: 'Digital'
+    color: 'from-sky-500/20 to-blue-500/20',
+    borderColor: 'border-sky-500/40',
+    iconColor: 'text-sky-400',
   },
   {
-    id: 'p-8',
-    title: 'Kegiatan Kemasyarakatan & PHBN',
-    category: 'Kegiatan Masyarakat',
-    description: 'Penyelenggaraan peringatan hari besar nasional (HUT RI), pentas seni budaya sunda, dan tradisi lokal.',
-    icon: Sparkles,
-    color: 'from-yellow-500/20 to-amber-500/20 text-yellow-400 border-yellow-500/30',
-    badge: 'Budaya'
-  }
+    id: 8,
+    title: 'PHBN & Kebangsaan',
+    desc: 'Peringatan Hari Besar Nasional & nasionalisme pemuda.',
+    icon: Flag,
+    color: 'from-rose-500/20 to-orange-500/20',
+    borderColor: 'border-rose-500/40',
+    iconColor: 'text-rose-400',
+  },
 ];
 
 export default function ProgramUnggulan() {
   return (
-    <section className="py-20 bg-slate-950 text-slate-100 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 sm:py-24 bg-slate-950 relative overflow-hidden">
+      
+      {/* Background Decorative Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-600/10 blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 relative z-10">
         
-        {/* Section Title */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>FOKUS PENGABDIAN</span>
-          </div>
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Program Unggulan Karang Taruna
+        {/* Section Header */}
+        <div className="text-center space-y-3">
+          <span className="px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-extrabold uppercase tracking-widest">
+            PILAR PENGABDIAN
+          </span>
+
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight">
+            Program Kerja & Pilar Unggulan
           </h2>
-          <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
-            Delapan pilar bidang kerja strategis untuk mengoptimalkan potensi pemuda dan melayani kebutuhan masyarakat Kecamatan Cikancung.
+
+          <p className="text-slate-300 text-xs sm:text-base max-w-2xl mx-auto">
+            Fokus bidang kerja Karang Taruna Kecamatan Cikancung dalam mewujudkan kepemudaan yang aktif dan berdaya saing.
           </p>
         </div>
 
-        {/* 8 Card Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {PROGRAMS_DATA.map((prog) => {
+        {/* COMPACT RESPONSIVE 2-COLUMN / 3-COLUMN MOBILE COMPACT 6-GRID */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+          {programs.map((prog) => {
             const Icon = prog.icon;
             return (
               <div
                 key={prog.id}
-                className="group relative p-6 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-900 transition-all duration-300 hover:-translate-y-1.5 shadow-xl hover:shadow-2xl hover:shadow-emerald-950/40 flex flex-col justify-between"
+                className={`p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl bg-slate-900/90 border ${prog.borderColor} hover:border-emerald-400/80 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between space-y-2 sm:space-y-4 shadow-xl group`}
               >
-                <div className="space-y-4">
-                  
-                  {/* Top Bar: Icon & Badge */}
-                  <div className="flex items-center justify-between">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${prog.color} border flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform`}>
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
-                      {prog.badge}
-                    </span>
+                <div className="space-y-2 sm:space-y-3">
+                  <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br ${prog.color} flex items-center justify-center ${prog.iconColor} group-hover:scale-110 transition-transform duration-300`}>
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
 
-                  {/* Title & Description */}
-                  <div>
-                    <h3 className="font-bold text-base text-white group-hover:text-emerald-400 transition-colors">
-                      {prog.title}
-                    </h3>
-                    <p className="text-slate-400 text-xs leading-relaxed mt-2">
-                      {prog.description}
-                    </p>
-                  </div>
+                  <h3 className="font-extrabold text-xs sm:text-base text-white group-hover:text-emerald-300 transition-colors leading-tight line-clamp-2">
+                    {prog.title}
+                  </h3>
 
+                  <p className="text-[10px] sm:text-xs text-slate-400 leading-normal line-clamp-2 sm:line-clamp-3">
+                    {prog.desc}
+                  </p>
                 </div>
 
-                {/* Bottom link indicator */}
-                <div className="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-semibold text-slate-500 group-hover:text-emerald-400 transition-colors">
-                  <span>Lihat Aktivitas</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                <div className="pt-1 text-[10px] font-bold text-emerald-400 flex items-center space-x-1 opacity-80 group-hover:opacity-100">
+                  <span>Selengkapnya</span>
+                  <span>→</span>
                 </div>
               </div>
             );

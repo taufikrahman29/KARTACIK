@@ -5,167 +5,155 @@ import Link from 'next/link';
 import { 
   Shield, 
   MapPin, 
-  Mail, 
   Phone, 
-  Car, 
-  MessageSquareWarning, 
-  ArrowUpRight,
-  Heart
+  Mail, 
+  ExternalLink,
+  ChevronRight,
+  Send
 } from 'lucide-react';
-import { InstagramIcon, FacebookIcon, YoutubeIcon } from '@/components/Icons';
+import { InstagramIcon } from '@/components/Icons';
 
 export default function Footer() {
   return (
-    <footer className="bg-slate-950 text-slate-300 border-t border-slate-800 pt-16 pb-12 relative overflow-hidden">
-      {/* Glow ambient */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-900/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-900/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800/80">
+    <footer className="bg-slate-950 text-slate-400 border-t border-slate-900 pt-16 pb-12 font-sans text-xs">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           
-          {/* Col 1: Brand Info */}
-          <div className="lg:col-span-2 space-y-4">
+          {/* BRAND COLUMN */}
+          <div className="space-y-4 md:col-span-1">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 p-0.5 shadow-md shadow-emerald-500/20">
-                <div className="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-emerald-400" />
-                </div>
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-slate-950 shadow-lg shadow-emerald-950/50">
+                <Shield className="w-6 h-6 fill-slate-950" />
               </div>
               <div>
-                <h3 className="font-extrabold text-white text-lg tracking-tight">
-                  KARANG TARUNA
-                </h3>
-                <p className="text-xs text-emerald-400 font-semibold tracking-wider uppercase">
-                  Kecamatan Cikancung
-                </p>
+                <h3 className="font-extrabold text-white text-base leading-tight">KARANG TARUNA</h3>
+                <p className="text-[10px] text-emerald-400 font-bold tracking-widest uppercase">KECAMATAN CIKANCUNG</p>
               </div>
             </div>
 
-            <p className="text-xs leading-relaxed text-slate-400 pr-4">
-              Wadah pembinaan dan pengembangan generasi muda di 9 Desa se-Kecamatan Cikancung, Kabupaten Bandung. Berkomitmen bergerak bersama untuk kemajuan sosial, olahraga, kebudayaan, dan kemandirian ekonomi daerah.
+            <p className="text-slate-400 text-xs leading-relaxed">
+              Wadah resmi generasi muda di 9 Desa se-Kecamatan Cikancung, Kabupaten Bandung. Bergerak bersama mewujudkan pemuda mandiri, berkarakter, dan inovatif.
             </p>
 
             <div className="flex items-center space-x-3 pt-2">
               <a
-                href="https://instagram.com/kartabacip"
+                href="https://www.instagram.com/karta.kec.cikancung/"
                 target="_blank"
                 rel="noreferrer"
-                aria-label="Instagram Karang Taruna Cikancung"
-                className="w-9 h-9 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-pink-400 hover:border-pink-500/40 hover:bg-slate-800 transition-all"
+                aria-label="Instagram Official"
+                className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 hover:border-pink-500 text-slate-300 hover:text-pink-400 flex items-center justify-center transition-all hover:scale-110"
               >
-                <InstagramIcon className="w-4 h-4" />
+                <InstagramIcon className="w-4 h-4 fill-current" />
               </a>
               <a
-                href="https://facebook.com/kartabacip"
+                href="https://wa.me/62895632180100"
                 target="_blank"
                 rel="noreferrer"
-                aria-label="Facebook Karang Taruna Cikancung"
-                className="w-9 h-9 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-blue-400 hover:border-blue-500/40 hover:bg-slate-800 transition-all"
+                aria-label="WhatsApp Official"
+                className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500 text-slate-300 hover:text-emerald-400 flex items-center justify-center transition-all hover:scale-110"
               >
-                <FacebookIcon className="w-4 h-4" />
+                <Phone className="w-4 h-4" />
               </a>
               <a
-                href="https://youtube.com/@KarangTarunaCikancung"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="YouTube Karang Taruna Cikancung"
-                className="w-9 h-9 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-red-400 hover:border-red-500/40 hover:bg-slate-800 transition-all"
+                href="mailto:pktkeccikancung@gmail.com"
+                aria-label="Email Official"
+                className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-500 text-slate-300 hover:text-cyan-400 flex items-center justify-center transition-all hover:scale-110"
               >
-                <YoutubeIcon className="w-4 h-4" />
+                <Mail className="w-4 h-4" />
               </a>
             </div>
           </div>
 
-          {/* Col 2: Quick Links */}
+          {/* QUICK LINKS */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white border-b border-emerald-500/30 pb-2 inline-block">
-              Navigasi Utama
-            </h4>
-            <ul className="space-y-2 text-xs">
-              {['Beranda', 'Profil', 'Berita', 'Agenda', 'Pengumuman', 'Galeri', 'Struktur Organisasi'].map((item) => {
-                const href = item === 'Beranda' ? '/' : item === 'Struktur Organisasi' ? '/organisasi' : `/${item.toLowerCase()}`;
-                return (
-                  <li key={item}>
-                    <Link href={href} className="text-slate-400 hover:text-emerald-400 transition-colors flex items-center space-x-1 group">
-                      <span>{item}</span>
-                    </Link>
-                  </li>
-                );
-              })}
+            <h4 className="font-extrabold text-white text-sm tracking-wider uppercase">NAVIGASI UTAMA</h4>
+            <ul className="space-y-2">
+              {[
+                { name: 'Beranda', href: '/' },
+                { name: 'Profil & Visi Misi', href: '/profil' },
+                { name: 'Struktur Organisasi', href: '/organisasi' },
+                { name: 'Berita & Instagram', href: '/berita' },
+                { name: 'Agenda Kegiatan', href: '/agenda' },
+                { name: 'Pengumuman Resmi', href: '/pengumuman' },
+                { name: 'Galeri Foto', href: '/galeri' },
+              ].map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="hover:text-emerald-400 transition-colors flex items-center space-x-1.5">
+                    <ChevronRight className="w-3 h-3 text-emerald-500" />
+                    <span>{link.name}</span>
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Col 3: Layanan Unggulan */}
+          {/* DIGITIZATION & GRAB KT */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white border-b border-emerald-500/30 pb-2 inline-block">
-              Layanan Unggulan
-            </h4>
-            <ul className="space-y-2.5 text-xs">
-              <li>
-                <Link href="/grab-kt" className="p-2 rounded-lg bg-emerald-950/40 border border-emerald-800/40 text-emerald-300 hover:bg-emerald-900/60 flex items-center justify-between group">
-                  <div className="flex items-center space-x-2">
-                    <Car className="w-4 h-4 text-emerald-400" />
-                    <span className="font-semibold">Grab KT Transport</span>
-                  </div>
-                  <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </Link>
-              </li>
-              <li>
-                <Link href="/pengaduan" className="p-2 rounded-lg bg-amber-950/30 border border-amber-800/30 text-amber-300 hover:bg-amber-900/40 flex items-center justify-between group">
-                  <div className="flex items-center space-x-2">
-                    <MessageSquareWarning className="w-4 h-4 text-amber-400" />
-                    <span className="font-semibold">Pengaduan Warga</span>
-                  </div>
-                  <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </Link>
-              </li>
-              <li>
-                <Link href="/berita" className="text-slate-400 hover:text-emerald-400 transition-colors">
-                  Feed Instagram @kartabacip
-                </Link>
-              </li>
+            <h4 className="font-extrabold text-white text-sm tracking-wider uppercase">LAYANAN DIGITAL & INOVASI</h4>
+            <ul className="space-y-2">
+              {[
+                { name: 'Portal Grab KT (Transportasi)', href: '/grab-kt' },
+                { name: 'Pendaftaran Driver Grab KT', href: '/grab-kt/driver/register' },
+                { name: 'Pengaduan Warga Online', href: '/pengaduan' },
+                { name: 'Hotline WhatsApp Warga', href: 'https://wa.me/62895632180100' },
+                { name: 'Direct Message Instagram', href: 'https://www.instagram.com/karta.kec.cikancung/' },
+                { name: 'Admin Dashboard CMS', href: '/admin/login' },
+              ].map((link) => (
+                <li key={link.name}>
+                  <Link href={link.href} className="hover:text-emerald-400 transition-colors flex items-center space-x-1.5">
+                    <ChevronRight className="w-3 h-3 text-emerald-500" />
+                    <span>{link.name}</span>
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Col 4: Contact Info */}
+          {/* CONTACT & OFFICE */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white border-b border-emerald-500/30 pb-2 inline-block">
-              Sekretariat Pusat
-            </h4>
-            <div className="space-y-2.5 text-xs text-slate-400">
+            <h4 className="font-extrabold text-white text-sm tracking-wider uppercase">KONTAK KANTOR SECRETARIAT</h4>
+            
+            <div className="space-y-2 text-slate-300">
               <div className="flex items-start space-x-2.5">
                 <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span>Jl. Raya Cikancung No. 01, Kantor Kecamatan Cikancung, Kabupaten Bandung, Jawa Barat 40396</span>
+                <p>Jl. Raya Cikancung No. 01, Kompleks Kantor Kecamatan Cikancung, Kabupaten Bandung, Jawa Barat 40396.</p>
               </div>
+
+              <div className="flex items-center space-x-2.5">
+                <InstagramIcon className="w-4 h-4 fill-pink-400 shrink-0" />
+                <a href="https://www.instagram.com/karta.kec.cikancung/" target="_blank" rel="noreferrer" className="hover:text-pink-400 transition-colors font-bold">
+                  @karta.kec.cikancung
+                </a>
+              </div>
+
               <div className="flex items-center space-x-2.5">
                 <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>+62 812-3456-7890 (WhatsApp Hotline)</span>
+                <a href="https://wa.me/62895632180100" target="_blank" rel="noreferrer" className="hover:text-emerald-400 transition-colors font-bold">
+                  0895-6321-80100
+                </a>
               </div>
+
               <div className="flex items-center space-x-2.5">
-                <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>info@kartabacip.or.id</span>
+                <Mail className="w-4 h-4 text-cyan-400 shrink-0" />
+                <a href="mailto:pktkeccikancung@gmail.com" className="hover:text-cyan-400 transition-colors font-bold">
+                  pktkeccikancung@gmail.com
+                </a>
               </div>
             </div>
           </div>
 
         </div>
 
-        {/* Bottom bar */}
-        <div className="pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-slate-500 space-y-4 md:space-y-0">
-          <p>© 2026 Karang Taruna Kecamatan Cikancung. All Rights Reserved.</p>
+        {/* BOTTOM COPYRIGHT */}
+        <div className="pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left text-slate-400">
+          <p>© 2026 Karang Taruna Kecamatan Cikancung, Kabupaten Bandung. Hak Cipta Dilindungi Undang-Undang.</p>
+          
           <div className="flex items-center space-x-4">
-            <Link href="/admin/login" className="hover:text-emerald-400 transition-colors">
-              Portal Admin CMS
-            </Link>
-            <span>•</span>
-            <span className="flex items-center space-x-1 text-slate-400">
-              <span>Dikembangkan dengan</span>
-              <Heart className="w-3 h-3 text-red-500 fill-red-500" />
-              <span>untuk Pemuda Cikancung</span>
-            </span>
+            <span className="text-emerald-400 font-bold">Kecamatan Cikancung Maju & Mandiri</span>
           </div>
         </div>
+
       </div>
     </footer>
   );
