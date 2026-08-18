@@ -88,6 +88,42 @@ export default function AdminDashboardPage() {
   const [orgSubTab, setOrgSubTab] = useState<'TABEL' | 'PREVIEW'>('TABEL');
   const [complaintFilter, setComplaintFilter] = useState<'SEMUA' | 'PENDING' | 'DIPROSES' | 'SELESAI'>('SEMUA');
 
+  // ---------------- TOAST & LOADING STATE ----------------
+  const [toast, setToast] = useState<{
+    show: boolean;
+    type: 'loading' | 'success' | 'error';
+    title: string;
+    message?: string;
+  }>({
+    show: false,
+    type: 'success',
+    title: '',
+    message: ''
+  });
+
+  const triggerToast = (title: string, message?: string, onComplete?: () => void) => {
+    setToast({
+      show: true,
+      type: 'loading',
+      title: 'Memproses Pembaharuan...',
+      message: 'Sedang menyimpan data ke database...'
+    });
+
+    setTimeout(() => {
+      setToast({
+        show: true,
+        type: 'success',
+        title,
+        message
+      });
+      if (onComplete) onComplete();
+
+      setTimeout(() => {
+        setToast(prev => ({ ...prev, show: false }));
+      }, 2500);
+    }, 600);
+  };
+
   // ---------------- MODAL STATES ----------------
   // 1. Instagram Modal State
   const [showIgModal, setShowIgModal] = useState(false);
@@ -1189,8 +1225,7 @@ export default function AdminDashboardPage() {
               <button
                 onClick={() => {
                   DataStore.saveSettings(settings);
-                  alert('Konten Profil Berhasil Disimpan!');
-                  refreshData();
+                  triggerToast('Konten Profil Berhasil Disimpan!', 'Perubahan profil, visi, dan poin misi telah diperbarui.', refreshData);
                 }}
                 className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-lg"
               >
@@ -1395,7 +1430,7 @@ export default function AdminDashboardPage() {
               <button
                 onClick={() => {
                   DataStore.saveTariff(tariff);
-                  alert('Tarif Grab KT Berhasil Diperbarui!');
+                  triggerToast('Konfigurasi Tarif Berhasil Disimpan!', 'Tarif dasar, per KM, dan biaya layanan Grab KT diperbarui.', refreshData);
                 }}
                 className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-md"
               >
@@ -1503,8 +1538,7 @@ export default function AdminDashboardPage() {
               <button
                 onClick={() => {
                   DataStore.saveSettings(settings);
-                  alert('Pengaturan Logo & Sosial Media Berhasil Disimpan!');
-                  refreshData();
+                  triggerToast('Pengaturan Logo & Medsos Berhasil Disimpan!', 'Perubahan logo dan akun media sosial telah diperbarui.', refreshData);
                 }}
                 className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-extrabold text-xs shadow-lg"
               >
@@ -2108,6 +2142,29 @@ export default function AdminDashboardPage() {
                 <button type="submit" className="px-6 py-2 rounded-xl bg-emerald-600 text-white font-bold">{editingMember ? 'Simpan' : 'Tambah'}</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ---------------- FLOATING TOAST & LOADING NOTIFICATION ---------------- */}
+      {toast.show && (
+        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 fade-in duration-300">
+          <div className={`p-4 rounded-2xl border shadow-2xl backdrop-blur-xl flex items-center space-x-3.5 max-w-sm ${
+            toast.type === 'loading'
+              ? 'bg-slate-900/95 border-emerald-500/50 text-white'
+              : toast.type === 'success'
+              ? 'bg-emerald-950/95 border-emerald-400 text-white'
+              : 'bg-red-950/95 border-red-500 text-white'
+          }`}>
+            <div className="shrink-0">
+              {toast.type === 'loading' && <Loader2 className="w-6 h-6 text-emerald-400 animate-spin" />}
+              {toast.type === 'success' && <CheckCircle2 className="w-6 h-6 text-emerald-400" />}
+              {toast.type === 'error' && <XCircle className="w-6 h-6 text-red-400" />}
+            </div>
+            <div>
+              <h4 className="font-extrabold text-sm text-white">{toast.title}</h4>
+              {toast.message && <p className="text-xs text-slate-300 mt-0.5">{toast.message}</p>}
+            </div>
           </div>
         </div>
       )}
