@@ -43,7 +43,10 @@ import {
   MapPin,
   Tag,
   Wand2,
-  Loader2
+  Loader2,
+  Image as ImageIcon,
+  RefreshCw,
+  EyeOff
 } from 'lucide-react';
 import { InstagramIcon } from '@/components/Icons';
 import { 
@@ -60,16 +63,18 @@ import {
   GrabOrder, 
   GrabTariff, 
   SiteSettings,
-  InstagramPost
+  InstagramPost,
+  HeroSlide
 } from '@/lib/data-store';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<
-    'DASHBOARD' | 'BERITA' | 'AGENDA' | 'PENGUMUMAN' | 'GALERI' | 'ORGANISASI' | 'PROFIL' | 'PESAN' | 'GRAB_KT' | 'PENGATURAN'
+    'DASHBOARD' | 'HERO_SLIDER' | 'BERITA' | 'AGENDA' | 'PENGUMUMAN' | 'GALERI' | 'ORGANISASI' | 'PROFIL' | 'PESAN' | 'GRAB_KT' | 'PENGATURAN'
   >('DASHBOARD');
 
   // CMS Data States
+  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [igPosts, setIgPosts] = useState<InstagramPost[]>([]);
   const [agendas, setAgendas] = useState<AgendaItem[]>([]);
@@ -232,11 +237,35 @@ export default function AdminDashboardPage() {
     status: 'ACTIVE'
   });
 
+  // 7. Hero Slide Modal State
+  const [showHeroModal, setShowHeroModal] = useState(false);
+  const [editingHeroSlide, setEditingHeroSlide] = useState<HeroSlide | null>(null);
+  const [heroForm, setHeroForm] = useState<{
+    title: string;
+    subtitle: string;
+    badge: string;
+    imageUrl: string;
+    ctaText: string;
+    ctaLink: string;
+    isActive: boolean;
+    sortOrder: number;
+  }>({
+    title: '',
+    subtitle: '',
+    badge: '',
+    imageUrl: '',
+    ctaText: 'Profil Kami',
+    ctaLink: '/profil',
+    isActive: true,
+    sortOrder: 1
+  });
+
   useEffect(() => {
     refreshData();
   }, []);
 
   const refreshData = () => {
+    setHeroSlides(DataStore.getHeroSlides());
     setNews(DataStore.getNews());
     setIgPosts(DataStore.getInstagramPosts());
     setAgendas(DataStore.getAgendas());
@@ -253,6 +282,80 @@ export default function AdminDashboardPage() {
     setOrders(DataStore.getOrders());
     setTariff(DataStore.getTariff());
     setSettings(DataStore.getSettings());
+  };
+
+  const openAddHeroModal = () => {
+    setEditingHeroSlide(null);
+    setHeroForm({
+      title: '',
+      subtitle: '',
+      badge: 'Program Unggulan',
+      imageUrl: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1600&auto=format&fit=crop&q=80',
+      ctaText: 'Profil Kami',
+      ctaLink: '/profil',
+      isActive: true,
+      sortOrder: heroSlides.length + 1
+    });
+    setShowHeroModal(true);
+  };
+
+  const openEditHeroModal = (item: HeroSlide) => {
+    setEditingHeroSlide(item);
+    setHeroForm({
+      title: item.title,
+      subtitle: item.subtitle || '',
+      badge: item.badge || '',
+      imageUrl: item.imageUrl,
+      ctaText: item.ctaText || 'Lihat Detail',
+      ctaLink: item.ctaLink || '/galeri',
+      isActive: item.isActive,
+      sortOrder: item.sortOrder
+    });
+    setShowHeroModal(true);
+  };
+
+  const handleSaveHeroSlide = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!heroForm.title || !heroForm.imageUrl) {
+      alert('Judul Slide dan URL Gambar wajib diisi.');
+      return;
+    }
+
+    if (editingHeroSlide) {
+      DataStore.updateHeroSlide(editingHeroSlide.id, heroForm);
+      triggerToast('Slide Hero Berhasil Diperbarui!', 'Perubahan foto hero telah disimpan.', refreshData);
+    } else {
+      DataStore.addHeroSlide(heroForm);
+      triggerToast('Slide Hero Baru Ditambahkan!', 'Foto hero baru telah tersimpan dan tampil di homepage.', refreshData);
+    }
+    setShowHeroModal(false);
+  };
+
+  const handleToggleHeroActive = (slide: HeroSlide) => {
+    DataStore.updateHeroSlide(slide.id, { isActive: !slide.isActive });
+    refreshData();
+  };
+
+  const handleMoveHeroOrder = (slide: HeroSlide, direction: 'UP' | 'DOWN') => {
+    const currentIdx = heroSlides.findIndex(s => s.id === slide.id);
+    if (currentIdx === -1) return;
+    const targetIdx = direction === 'UP' ? currentIdx - 1 : currentIdx + 1;
+    if (targetIdx < 0 || targetIdx >= heroSlides.length) return;
+
+    const newSlides = [...heroSlides];
+    const tempOrder = newSlides[currentIdx].sortOrder;
+    newSlides[currentIdx].sortOrder = newSlides[targetIdx].sortOrder;
+    newSlides[targetIdx].sortOrder = tempOrder;
+
+    DataStore.saveHeroSlides(newSlides);
+    refreshData();
+  };
+
+  const handleResetHeroSlides = () => {
+    if (window.confirm('Apakah Anda yakin ingin mengembalikan slide gambar hero ke data demo default?')) {
+      DataStore.resetHeroSlides();
+      triggerToast('Slide Hero Direset!', 'Foto slider hero dikembalikan ke preset default.', refreshData);
+    }
   };
 
   const handleLogout = () => {
@@ -673,7 +776,8 @@ export default function AdminDashboardPage() {
         <nav className="space-y-1 text-xs">
           {[
             { id: 'DASHBOARD', name: 'Dashboard CMS', icon: LayoutDashboard },
-            { id: 'BERITA', name: 'Berita & Instagram', icon: Newspaper, count: news.length + igPosts.length, highlight: true },
+            { id: 'HERO_SLIDER', name: 'Slider Gambar Hero', icon: ImageIcon, count: heroSlides.length, highlight: true },
+            { id: 'BERITA', name: 'Berita & Instagram', icon: Newspaper, count: news.length + igPosts.length },
             { id: 'AGENDA', name: 'Agenda Kegiatan', icon: Calendar, count: agendas.length },
             { id: 'PENGUMUMAN', name: 'Pengumuman', icon: Bell, count: announcements.length },
             { id: 'GALERI', name: 'Galeri Foto', icon: Camera, count: gallery.length },
@@ -1548,6 +1652,153 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
+        {/* 11. TAB: HERO SLIDER MANAGEMENT */}
+        {activeTab === 'HERO_SLIDER' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 p-5 rounded-2xl border border-slate-800 backdrop-blur-md">
+              <div>
+                <div className="flex items-center space-x-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                  <ImageIcon className="w-4 h-4" />
+                  <span>KUSTOMISASI HOMEPAGE HERO</span>
+                </div>
+                <h1 className="text-xl font-black text-white mt-1">Slider Gambar Hero Homepage</h1>
+                <p className="text-xs text-slate-400 mt-1">
+                  Atur foto background slider hero yang berganti otomatis di halaman depan utama website.
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={handleResetHeroSlides}
+                  className="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold text-xs flex items-center space-x-1.5 border border-slate-700 transition-all"
+                  title="Kembalikan ke gambar default demo"
+                >
+                  <RefreshCw className="w-4 h-4 text-amber-400" />
+                  <span>Reset Demo</span>
+                </button>
+
+                <button
+                  onClick={openAddHeroModal}
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-bold text-xs flex items-center space-x-2 shadow-lg shadow-emerald-950/50 hover:scale-105 transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Tambah Slide Gambar</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Slider Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {heroSlides.map((slide, index) => (
+                <div 
+                  key={slide.id} 
+                  className={`bg-slate-900 border rounded-2xl overflow-hidden transition-all duration-300 relative group flex flex-col justify-between ${
+                    slide.isActive ? 'border-slate-800 hover:border-emerald-500/50 shadow-xl' : 'border-slate-800/60 opacity-60 bg-slate-950/50'
+                  }`}
+                >
+                  {/* Image Preview Area */}
+                  <div className="relative h-48 w-full bg-slate-950 overflow-hidden">
+                    <img 
+                      src={slide.imageUrl} 
+                      alt={slide.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                    
+                    {/* Top Overlay Badges */}
+                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                      <span className="px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-md text-[11px] font-black text-emerald-400 border border-slate-700">
+                        Urutan #{slide.sortOrder}
+                      </span>
+
+                      <button
+                        onClick={() => handleToggleHeroActive(slide)}
+                        className={`px-3 py-1 rounded-full text-[11px] font-bold backdrop-blur-md flex items-center space-x-1.5 transition-all ${
+                          slide.isActive 
+                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' 
+                            : 'bg-red-500/20 text-red-300 border border-red-500/40'
+                        }`}
+                      >
+                        {slide.isActive ? (
+                          <>
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                            <span>AKTIF</span>
+                          </>
+                        ) : (
+                          <>
+                            <EyeOff className="w-3.5 h-3.5 text-red-400" />
+                            <span>NON-AKTIF</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    {/* Bottom Image Title */}
+                    <div className="absolute bottom-3 left-3 right-3 space-y-1">
+                      {slide.badge && (
+                        <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                          {slide.badge}
+                        </span>
+                      )}
+                      <h3 className="font-extrabold text-base text-white truncate leading-tight">
+                        {slide.title}
+                      </h3>
+                    </div>
+                  </div>
+
+                  {/* Card Content & Meta */}
+                  <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
+                    <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                      {slide.subtitle || 'Tidak ada deskripsi singkat.'}
+                    </p>
+
+                    <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+                      {/* Action CTA info */}
+                      <div className="text-[11px] text-slate-400">
+                        <span className="font-semibold text-slate-300">Tombol:</span> {slide.ctaText || 'Default'} ({slide.ctaLink || '/'})
+                      </div>
+
+                      {/* Control buttons */}
+                      <div className="flex items-center space-x-1.5">
+                        <button
+                          onClick={() => handleMoveHeroOrder(slide, 'UP')}
+                          disabled={index === 0}
+                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 disabled:opacity-30 border border-slate-700"
+                          title="Naikkan Urutan"
+                        >
+                          <ArrowUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleMoveHeroOrder(slide, 'DOWN')}
+                          disabled={index === heroSlides.length - 1}
+                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 disabled:opacity-30 border border-slate-700"
+                          title="Turunkan Urutan"
+                        >
+                          <ArrowDown className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => openEditHeroModal(slide)}
+                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700"
+                          title="Edit Slide"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => confirmDelete(slide.title, () => DataStore.deleteHeroSlide(slide.id))}
+                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-red-950 text-red-400 border border-slate-700"
+                          title="Hapus Slide"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
       </section>
 
       {/* ---------------- MODALS LAYER ---------------- */}
@@ -2141,6 +2392,175 @@ export default function AdminDashboardPage() {
                 <button type="button" onClick={() => setShowMemberModal(false)} className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold">Batal</button>
                 <button type="submit" className="px-6 py-2 rounded-xl bg-emerald-600 text-white font-bold">{editingMember ? 'Simpan' : 'Tambah'}</button>
               </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 8. HERO SLIDE MODAL */}
+      {showHeroModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="bg-slate-900 border border-slate-700 rounded-3xl max-w-xl w-full p-6 space-y-4 shadow-2xl relative text-xs">
+            <button onClick={() => setShowHeroModal(false)} className="absolute top-4 right-4 p-2 rounded-full bg-slate-800 text-slate-300 hover:text-white"><X className="w-5 h-5" /></button>
+
+            <div className="space-y-1 border-b border-slate-800 pb-3">
+              <div className="flex items-center space-x-2 text-emerald-400 font-bold text-[10px] uppercase">
+                <ImageIcon className="w-3.5 h-3.5" />
+                <span>KUSTOMISASI HERO SLIDER</span>
+              </div>
+              <h2 className="text-lg font-extrabold text-white">{editingHeroSlide ? 'Edit Slide Gambar Hero' : 'Tambah Slide Gambar Hero Baru'}</h2>
+            </div>
+
+            <form onSubmit={handleSaveHeroSlide} className="space-y-4">
+              
+              <div className="space-y-1.5">
+                <label className="font-bold text-slate-200">Judul Foto / Kegiatan *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Penanaman 1.000 Pohon Pemuda Cikancung"
+                  value={heroForm.title}
+                  onChange={(e) => setHeroForm({ ...heroForm, title: e.target.value })}
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <label className="font-bold text-slate-200">Label Badge Kategori</label>
+                  <input
+                    type="text"
+                    placeholder="Contoh: Program Unggulan / Olahraga"
+                    value={heroForm.badge}
+                    onChange={(e) => setHeroForm({ ...heroForm, badge: e.target.value })}
+                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="font-bold text-slate-200">Urutan Tampil (Sort Order)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={heroForm.sortOrder}
+                    onChange={(e) => setHeroForm({ ...heroForm, sortOrder: parseInt(e.target.value) || 1 })}
+                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-bold text-slate-200">Deskripsi Singkat / Subtitle</label>
+                <textarea
+                  rows={2}
+                  placeholder="Keterangan singkat mengenai foto atau program yang ditampilkan..."
+                  value={heroForm.subtitle}
+                  onChange={(e) => setHeroForm({ ...heroForm, subtitle: e.target.value })}
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white"
+                />
+              </div>
+
+              {/* IMAGE URL & QUICK PRESETS */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="font-bold text-slate-200">URL Gambar (Resolusi Tinggi 16:9) *</label>
+                  <label className="cursor-pointer text-[10px] text-emerald-400 hover:underline flex items-center space-x-1">
+                    <Upload className="w-3 h-3" />
+                    <span>Upload Foto</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleGenericFileUpload(e, (base64) => setHeroForm({ ...heroForm, imageUrl: base64 }))}
+                    />
+                  </label>
+                </div>
+
+                <input
+                  type="url"
+                  required
+                  placeholder="https://images.unsplash.com/..."
+                  value={heroForm.imageUrl}
+                  onChange={(e) => setHeroForm({ ...heroForm, imageUrl: e.target.value })}
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500"
+                />
+
+                {/* Preset Quick Select */}
+                <div className="space-y-1">
+                  <span className="text-[10px] text-slate-400 font-semibold">Atau pilih preset foto sampel:</span>
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {[
+                      { label: '🌱 Lingkungan', url: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1600&auto=format&fit=crop&q=80' },
+                      { label: '⚽ Futsal', url: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1600&auto=format&fit=crop&q=80' },
+                      { label: '💼 UMKM Digital', url: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1600&auto=format&fit=crop&q=80' },
+                      { label: '🛵 Grab KT', url: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=1600&auto=format&fit=crop&q=80' }
+                    ].map((preset, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setHeroForm({ ...heroForm, imageUrl: preset.url })}
+                        className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold border border-slate-700"
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <label className="font-bold text-slate-200">Teks Tombol Aksi (CTA)</label>
+                  <input
+                    type="text"
+                    placeholder="Contoh: Lihat Galeri / Agenda"
+                    value={heroForm.ctaText}
+                    onChange={(e) => setHeroForm({ ...heroForm, ctaText: e.target.value })}
+                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="font-bold text-slate-200">Link Tujuan Tombol</label>
+                  <input
+                    type="text"
+                    placeholder="Contoh: /galeri atau /agenda"
+                    value={heroForm.ctaLink}
+                    onChange={(e) => setHeroForm({ ...heroForm, ctaLink: e.target.value })}
+                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2 pt-2">
+                <input
+                  type="checkbox"
+                  id="heroActiveCheck"
+                  checked={heroForm.isActive}
+                  onChange={(e) => setHeroForm({ ...heroForm, isActive: e.target.checked })}
+                  className="w-4 h-4 rounded accent-emerald-500"
+                />
+                <label htmlFor="heroActiveCheck" className="font-bold text-slate-200 cursor-pointer">
+                  Tampilkan Slide Ini di Website (Status Aktif)
+                </label>
+              </div>
+
+              <div className="flex items-center justify-end space-x-3 pt-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowHeroModal(false)}
+                  className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-extrabold shadow-lg"
+                >
+                  {editingHeroSlide ? 'Simpan Perubahan' : 'Tambah Slide'}
+                </button>
+              </div>
+
             </form>
           </div>
         </div>

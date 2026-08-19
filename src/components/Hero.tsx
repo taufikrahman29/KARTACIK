@@ -11,16 +11,48 @@ import {
   Calendar, 
   Car, 
   ShieldCheck, 
+  ChevronLeft,
+  ChevronRight,
+  Pause,
+  Play,
+  Image as ImageIcon,
   Sparkles 
 } from 'lucide-react';
+import { DataStore, HeroSlide, SEED_HERO_SLIDES } from '@/lib/data-store';
 
 export default function Hero() {
+  const [slides, setSlides] = useState<HeroSlide[]>([]);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
   const [counters, setCounters] = useState({
     villages: 0,
     members: 0,
     programs: 0,
     umkm: 0
   });
+
+  // Load Hero Slides from DataStore
+  useEffect(() => {
+    const loadedSlides = DataStore.getHeroSlides();
+    const activeSlides = loadedSlides.filter(s => s.isActive);
+    if (activeSlides.length > 0) {
+      setSlides(activeSlides);
+    } else {
+      setSlides(SEED_HERO_SLIDES);
+    }
+  }, []);
+
+  // Slide Autoplay Timer
+  useEffect(() => {
+    if (slides.length <= 1 || isPaused) return;
+
+    const timer = setInterval(() => {
+      setCurrentSlideIndex((prev) => (prev + 1) % slides.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [slides, isPaused]);
 
   // Animated Counter Effect on Load
   useEffect(() => {
@@ -48,26 +80,58 @@ export default function Hero() {
     return () => clearInterval(timer);
   }, []);
 
+  const handlePrevSlide = () => {
+    setCurrentSlideIndex((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+  };
+
+  const handleNextSlide = () => {
+    setCurrentSlideIndex((prev) => (prev + 1) % slides.length);
+  };
+
+  const currentSlide = slides[currentSlideIndex] || SEED_HERO_SLIDES[0];
+
   return (
-    <section className="relative min-h-screen flex flex-col justify-between pt-28 pb-16 overflow-hidden bg-slate-950">
-      {/* Background Image Overlay */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 scale-105 transition-transform duration-10000 hover:scale-100"
-        style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1600&auto=format&fit=crop&q=80')`
-        }}
-      />
+    <section 
+      className="relative min-h-screen flex flex-col justify-between pt-28 pb-16 overflow-hidden bg-slate-950 group"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      {/* Background Image Carousel with Smooth Crossfade */}
+      <div className="absolute inset-0 z-0">
+        {slides.length > 0 ? (
+          slides.map((slide, index) => (
+            <div
+              key={slide.id}
+              className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ease-in-out transform scale-105 ${
+                index === currentSlideIndex ? 'opacity-35 scale-100' : 'opacity-0 pointer-events-none'
+              }`}
+              style={{
+                backgroundImage: `url('${slide.imageUrl}')`,
+                transitionProperty: 'opacity, transform',
+                transitionDuration: '1000ms'
+              }}
+            />
+          ))
+        ) : (
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 scale-105"
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1600&auto=format&fit=crop&q=80')`
+            }}
+          />
+        )}
+      </div>
 
-      {/* Gradient Layers */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-900/60" />
-      <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-emerald-950/40" />
+      {/* Gradient Overlay Layers */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-900/60 z-[1]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/75 to-emerald-950/30 z-[1]" />
 
-      {/* Decorative Orbs */}
-      <div className="absolute top-1/4 left-10 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Decorative Blur Orbs */}
+      <div className="absolute top-1/4 left-10 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none z-[2]" />
+      <div className="absolute bottom-10 right-10 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none z-[2]" />
 
       {/* Main Content Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 my-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 my-auto w-full">
         <div className="max-w-3xl space-y-6">
           
           {/* Top Organization Tag Badge */}
@@ -76,6 +140,16 @@ export default function Hero() {
             <span>Website Resmi Karang Taruna Kecamatan Cikancung</span>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
           </div>
+
+          {/* Dynamic Slide Badge Tag if Available */}
+          {currentSlide && currentSlide.badge && (
+            <div className="block">
+              <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold backdrop-blur-md animate-fade-in">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>{currentSlide.badge}</span>
+              </span>
+            </div>
+          )}
 
           {/* Headline */}
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.15]">
@@ -86,18 +160,24 @@ export default function Hero() {
             Membangun Cikancung.
           </h1>
 
-          {/* Subheadline */}
-          <p className="text-sm sm:text-lg text-slate-300 leading-relaxed font-normal max-w-2xl">
-            Wadah generasi muda Karang Taruna di 9 Desa se-Kecamatan Cikancung untuk berorganisasi, berkarya, mendorong kemandirian ekonomi daerah, serta hadir berkontribusi nyata bagi masyarakat Kabupaten Bandung.
+          {/* Subheadline or Dynamic Slide Subtitle */}
+          <p className="text-sm sm:text-lg text-slate-300 leading-relaxed font-normal max-w-2xl min-h-[56px] transition-all duration-500">
+            {currentSlide?.subtitle ? (
+              <span className="block italic text-emerald-200/90 font-medium">
+                "{currentSlide.title}: {currentSlide.subtitle}"
+              </span>
+            ) : (
+              'Wadah generasi muda Karang Taruna di 9 Desa se-Kecamatan Cikancung untuk berorganisasi, berkarya, mendorong kemandirian ekonomi daerah, serta hadir berkontribusi nyata bagi masyarakat Kabupaten Bandung.'
+            )}
           </p>
 
           {/* Call-to-action Buttons */}
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <Link
-              href="/profil"
+              href={currentSlide?.ctaLink || "/profil"}
               className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm flex items-center space-x-2 shadow-lg shadow-emerald-950/50 hover:shadow-emerald-500/20 hover:scale-[1.02] transition-all border border-emerald-400/30"
             >
-              <span>Profil Kami</span>
+              <span>{currentSlide?.ctaText || "Profil Kami"}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 
@@ -123,7 +203,7 @@ export default function Hero() {
       </div>
 
       {/* Animated Counter Statistics Footer */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full mt-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full mt-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 rounded-2xl bg-slate-900/70 border border-slate-800/80 backdrop-blur-xl shadow-2xl shadow-slate-950">
           
           <div className="flex items-center space-x-3.5 p-2">

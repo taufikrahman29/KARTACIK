@@ -174,6 +174,18 @@ export interface GrabTariff {
   minFare: number;
 }
 
+export interface HeroSlide {
+  id: string;
+  title: string;
+  subtitle?: string;
+  badge?: string;
+  imageUrl: string;
+  ctaText?: string;
+  ctaLink?: string;
+  isActive: boolean;
+  sortOrder: number;
+}
+
 export interface SiteSettings {
   logoUrl?: string;
   instagramUsername: string;
@@ -390,7 +402,7 @@ export const SEED_MEMBERS: OrgMember[] = [
   { id: 'm-pb-4', name: 'Sekretaris Kecamatan Cikancung', role: 'Penasihat', category: 'PEMBINA_PENASIHAT', sortOrder: 4, status: 'ACTIVE', showPhoto: true, bio: 'Penasihat Karang Taruna Kecamatan' },
   
   // 2. MPKT
-  { id: 'm-mpkt-1', name: 'Agus Sofwan', role: 'Ketua MPKT', category: 'MPKT', isLeader: true, sortOrder: 5, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80', bio: 'Ketua Majelis Pertimbangan Karang Taruna Cikancung Masa Bakti 2025–2030' },
+  { id: 'm-mpkt-1', name: 'Agus Sofwan', role: 'Ketua MPKT', category: 'MPKT', sortOrder: 5, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80', bio: 'Ketua Majelis Pertimbangan Karang Taruna Cikancung Masa Bakti 2025–2030' },
   { id: 'm-mpkt-2', name: 'Indra', role: 'Wakil Ketua MPKT', category: 'MPKT', sortOrder: 6, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80' },
   { id: 'm-mpkt-3', name: 'A. Gustiara', role: 'Sekretaris MPKT', category: 'MPKT', sortOrder: 7, status: 'ACTIVE', showPhoto: true, photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80' },
   { id: 'm-mpkt-4', name: 'Asep Rohman', role: 'Anggota MPKT', category: 'MPKT', sortOrder: 8, status: 'ACTIVE', showPhoto: true },
@@ -570,6 +582,53 @@ export const SEED_SETTINGS: SiteSettings = {
   ]
 };
 
+export const SEED_HERO_SLIDES: HeroSlide[] = [
+  {
+    id: 'hs-1',
+    title: 'Aksi Pemuda & Penghijauan Cikancung',
+    subtitle: 'Penanaman 1.000 pohon di 9 Desa se-Kecamatan Cikancung untuk menjaga kelestarian alam dan lingkungan.',
+    badge: 'Program Unggulan',
+    imageUrl: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1600&auto=format&fit=crop&q=80',
+    ctaText: 'Lihat Galeri',
+    ctaLink: '/galeri',
+    isActive: true,
+    sortOrder: 1
+  },
+  {
+    id: 'hs-2',
+    title: 'Turnamen Futsal & Kepemudaan 2026',
+    subtitle: 'Menjunjung tinggi sportifitas dan mempererat kebersamaan seluruh pemuda Karang Taruna Desa.',
+    badge: 'Kegiatan Olahraga',
+    imageUrl: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1600&auto=format&fit=crop&q=80',
+    ctaText: 'Agenda Kegiatan',
+    ctaLink: '/agenda',
+    isActive: true,
+    sortOrder: 2
+  },
+  {
+    id: 'hs-3',
+    title: 'Pemberdayaan UMKM & Inovasi Digital',
+    subtitle: 'Pelatihan e-commerce, digital marketing, dan pendampingan legalitas usaha pemuda daerah.',
+    badge: 'Ekonomi Kreatif',
+    imageUrl: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1600&auto=format&fit=crop&q=80',
+    ctaText: 'Profil Kami',
+    ctaLink: '/profil',
+    isActive: true,
+    sortOrder: 3
+  },
+  {
+    id: 'hs-4',
+    title: 'Layanan Ojek & Kurir Lokal "Grab KT"',
+    subtitle: 'Transportasi digital resmi berbasis pemuda terverifikasi untuk kemudahan mobilitas warga Cikancung.',
+    badge: 'Layanan Grab KT',
+    imageUrl: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=1600&auto=format&fit=crop&q=80',
+    ctaText: 'Pesan Grab KT',
+    ctaLink: '/grab-kt',
+    isActive: true,
+    sortOrder: 4
+  }
+];
+
 // ------------ DATA STORE CLASS WITH LOCALSTORAGE INTEGRATION ------------
 
 export class DataStore {
@@ -727,7 +786,14 @@ export class DataStore {
 
   // Org Members
   static getMembers(): OrgMember[] {
-    return this.getItem('members', SEED_MEMBERS);
+    const list = this.getItem<OrgMember[]>('members', SEED_MEMBERS);
+    if (!list || list.length === 0) return SEED_MEMBERS;
+    return list.map(m => {
+      if (m.category === 'MPKT' || m.id === 'm-mpkt-1') {
+        return { ...m, isLeader: false };
+      }
+      return m;
+    });
   }
   static saveMembers(members: OrgMember[]) {
     this.setItem('members', members);
@@ -874,6 +940,50 @@ export class DataStore {
   }
   static saveSettings(settings: SiteSettings) {
     this.setItem('settings', settings);
+  }
+
+  // Hero Slides
+  static getHeroSlides(): HeroSlide[] {
+    const list = this.getItem<HeroSlide[]>('hero_slides', SEED_HERO_SLIDES);
+    if (!list || list.length === 0) {
+      return SEED_HERO_SLIDES;
+    }
+    return list.sort((a, b) => a.sortOrder - b.sortOrder);
+  }
+
+  static saveHeroSlides(slides: HeroSlide[]) {
+    this.setItem('hero_slides', slides);
+  }
+
+  static addHeroSlide(slide: Omit<HeroSlide, 'id'>): HeroSlide {
+    const slides = this.getHeroSlides();
+    const newSlide: HeroSlide = {
+      ...slide,
+      id: 'hs-' + Date.now()
+    };
+    slides.push(newSlide);
+    this.saveHeroSlides(slides);
+    return newSlide;
+  }
+
+  static updateHeroSlide(id: string, updated: Partial<HeroSlide>) {
+    const slides = this.getHeroSlides();
+    const index = slides.findIndex(s => s.id === id);
+    if (index !== -1) {
+      slides[index] = { ...slides[index], ...updated };
+      this.saveHeroSlides(slides);
+    }
+  }
+
+  static deleteHeroSlide(id: string) {
+    const slides = this.getHeroSlides();
+    const filtered = slides.filter(s => s.id !== id);
+    this.saveHeroSlides(filtered);
+  }
+
+  static resetHeroSlides(): HeroSlide[] {
+    this.saveHeroSlides(SEED_HERO_SLIDES);
+    return SEED_HERO_SLIDES;
   }
 
   // Admin Session

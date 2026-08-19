@@ -16,7 +16,10 @@ export default function ProfilPage() {
 
   useEffect(() => {
     const members = DataStore.getMembers();
-    const leader = members.find(m => m.isLeader || m.role.toLowerCase().includes('ketua karang taruna'));
+    const harianList = members.filter(m => m.category === 'PENGURUS_HARIAN');
+    const leader = harianList.find(m => m.isLeader || m.role.toLowerCase().includes('ketua karang taruna'))
+      || members.find(m => m.name.toLowerCase().includes('ridwan nur rohman'))
+      || members.find(m => m.role.toLowerCase().includes('ketua karang taruna'));
     if (leader) setKetua(leader);
   }, []);
 
